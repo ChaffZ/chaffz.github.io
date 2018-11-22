@@ -393,9 +393,18 @@
 
       
         
-          
-            
-          
+          <h4 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h4><p>昨天，有人拿着下面这段代码，问题我结果为什么不是10个10？</p>
+<blockquote>
+<p>当然，这道题的结果，我相信很大一部分人都会弄错。<br>所以，我希望做错的人都能静下心来看完本人的分析！<a href="https://play.golang.org/p/Llr9LnQ4YlT" target="_blank" rel="noopener">运行看结果</a></p>
+</blockquote>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        <span class="keyword">go</span> <span class="built_in">println</span>(i)</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
