@@ -406,6 +406,7 @@
 <p><strong>但是当把这一行注释了，程序会卡在 time.Sleep 处，这时候 go 程序设计中的另一个东西出场了——sys monitor 线程，这是 go 语言设计中的唯一一个(主线程除外)独立的线程。它的作用是监控 gorotine 状态的。当主 goroutine 在 sleep 时，monitor 认为占用时间不符合预期，它会把 P 让出来，而自己则进入 P 的 gorotine 队列等待。那么问题来了，P 有 next 位置呀，所以这时候 main gorotine 就占了 next 位置。从而导致输出顺序变成 0~9了。</strong></p>
 <p>Goexit() 与 Gosched() 唯一不同的地方则是它会丢弃此行代码后的所有堆栈，<br>并且如果丢弃的是 main gorotine 的话会 panic。结果也自然是输出 0~9 然后 panic 了。</p>
 <p>os.Exit() 自不必多说了。</p>
+<p>欢迎大家尝试并可和我讨论！！！<br>大家可关注公众号 cn_isnap 并留言！！</p>
 
           
         
