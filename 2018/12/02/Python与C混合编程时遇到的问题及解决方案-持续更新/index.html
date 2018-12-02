@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="python,c,c++,混编,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="相互调用的方式选择在做项目时，调研过两种方式：一是扩展Python ctypes 类型；二是引入Python开发文件实现Python的扩展。 扩展 ctypes 类型项目中遇到的第一个需要扩展的地方是，C/C++项目中用了C++ stl::vector。问题来了，在Python 的 ctypes 中没相关类型的封装呀，于是第一时间想到的是扩展 ctypes 类型。可是在实现的时候才发现这种方式是有">
+<meta name="keywords" content="python,c,c++,混编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python与C混合编程时遇到的问题及解决方案(持续更新)">
+<meta property="og:url" content="http://chaffz.github.io/2018/12/02/Python与C混合编程时遇到的问题及解决方案-持续更新/index.html">
+<meta property="og:site_name" content="三岁于辛博客">
+<meta property="og:description" content="相互调用的方式选择在做项目时，调研过两种方式：一是扩展Python ctypes 类型；二是引入Python开发文件实现Python的扩展。 扩展 ctypes 类型项目中遇到的第一个需要扩展的地方是，C/C++项目中用了C++ stl::vector。问题来了，在Python 的 ctypes 中没相关类型的封装呀，于是第一时间想到的是扩展 ctypes 类型。可是在实现的时候才发现这种方式是有">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-02T07:14:59.148Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python与C混合编程时遇到的问题及解决方案(持续更新)">
+<meta name="twitter:description" content="相互调用的方式选择在做项目时，调研过两种方式：一是扩展Python ctypes 类型；二是引入Python开发文件实现Python的扩展。 扩展 ctypes 类型项目中遇到的第一个需要扩展的地方是，C/C++项目中用了C++ stl::vector。问题来了，在Python 的 ctypes 中没相关类型的封装呀，于是第一时间想到的是扩展 ctypes 类型。可是在实现的时候才发现这种方式是有">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://chaffz.github.io/2018/12/02/Python与C混合编程时遇到的问题及解决方案-持续更新/">
+
+
+
+
+
+  <title>Python与C混合编程时遇到的问题及解决方案(持续更新) | 三岁于辛博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9fd6e72ea8e5e700f7d5445b8e304a48";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">三岁于辛博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一场养鸡梦</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/02/Python与C混合编程时遇到的问题及解决方案-持续更新/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="三岁于辛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="三岁于辛博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python与C混合编程时遇到的问题及解决方案(持续更新)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-02T15:12:21+08:00">
+                2018-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/后端/c/" itemprop="url" rel="index">
+                    <span itemprop="name">c</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="相互调用的方式选择"><a href="#相互调用的方式选择" class="headerlink" title="相互调用的方式选择"></a>相互调用的方式选择</h3><p>在做项目时，调研过两种方式：一是扩展Python ctypes 类型；二是引入Python开发文件实现Python的扩展。</p>
+<h4 id="扩展-ctypes-类型"><a href="#扩展-ctypes-类型" class="headerlink" title="扩展 ctypes 类型"></a>扩展 ctypes 类型</h4><p>项目中遇到的第一个需要扩展的地方是，C/C++项目中用了C++ stl::vector。问题来了，在Python 的 ctypes 中没相关类型的封装呀，于是第一时间想到的是扩展 ctypes 类型。可是在实现的时候才发现这种方式是有多麻烦。</p>
+<a id="more"></a>
+<h5 id="编写-c-gt-python-的接口文件"><a href="#编写-c-gt-python-的接口文件" class="headerlink" title="编写 c =&gt; python 的接口文件"></a>编写 c =&gt; python 的接口文件</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vectory_py.c</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">point_t</span>&gt;* new_vector()&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">vector</span>&lt;<span class="keyword">point_t</span>&gt;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete_vector</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">point_t</span>&gt;* v)</span></span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"destructor called in C++ for "</span> &lt;&lt; v &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">delete</span> v;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">vector_size</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">point_t</span>&gt;* v)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> v-&gt;size();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">point_t</span> vector_get(<span class="built_in">vector</span>&lt;<span class="keyword">point_t</span>&gt;* v, <span class="keyword">int</span> i)&#123;</span><br><span class="line">        <span class="keyword">return</span> v-&gt;at(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">vector_push_back</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">point_t</span>&gt;* v, <span class="keyword">point_t</span> i)</span></span>&#123;</span><br><span class="line">        v-&gt;push_back(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>编译： gcc -fPIC -shared -lpython3.6m -o vector_py.so vectory_py.c</p>
+</blockquote>
+<h5 id="编写-ctypes-类型文件"><a href="#编写-ctypes-类型文件" class="headerlink" title="编写 ctypes 类型文件"></a>编写 ctypes 类型文件</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">c_point_t</span><span class="params">(Structure)</span>:</span></span><br><span class="line">    _fields_ = [(<span class="string">"x"</span>, c_int), (<span class="string">"y"</span>, c_int)]</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vector</span><span class="params">(object)</span>:</span></span><br><span class="line">    lib = cdll.LoadLibrary(<span class="string">'./vector_py_lib.so'</span>) <span class="comment"># class level loading lib</span></span><br><span class="line">    lib.new_vector.restype = c_void_p</span><br><span class="line">    lib.new_vector.argtypes = []</span><br><span class="line">    lib.delete_vector.restype = <span class="keyword">None</span></span><br><span class="line">    lib.delete_vector.argtypes = [c_void_p]</span><br><span class="line">    lib.vector_size.restype = c_int</span><br><span class="line">    lib.vector_size.argtypes = [c_void_p]</span><br><span class="line">    lib.vector_get.restype = c_point_t</span><br><span class="line">    lib.vector_get.argtypes = [c_void_p, c_int]</span><br><span class="line">    lib.vector_push_back.restype = <span class="keyword">None</span></span><br><span class="line">    lib.vector_push_back.argtypes = [c_void_p, c_point_t]</span><br><span class="line">    lib.foo.restype = <span class="keyword">None</span></span><br><span class="line">    lib.foo.argtypes = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.vector = Vector.lib.new_vector()  <span class="comment"># pointer to new vector</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__del__</span><span class="params">(self)</span>:</span>  <span class="comment"># when reference count hits 0 in Python,</span></span><br><span class="line">        Vector.lib.delete_vector(self.vector)  <span class="comment"># call C++ vector destructor</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> Vector.lib.vector_size(self.vector)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, i)</span>:</span>  <span class="comment"># access elements in vector at index</span></span><br><span class="line">        <span class="keyword">if</span> <span class="number">0</span> &lt;= i &lt; len(self):</span><br><span class="line">            <span class="keyword">return</span> Vector.lib.vector_get(self.vector, c_int(i))</span><br><span class="line">        <span class="keyword">raise</span> IndexError(<span class="string">'Vector index out of range'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'[&#123;&#125;]'</span>.format(<span class="string">', '</span>.join(str(self[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(len(self))))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span><span class="params">(self, i)</span>:</span>  <span class="comment"># push calls vector's push_back</span></span><br><span class="line">        Vector.lib.vector_push_back(self.vector, i)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(self)</span>:</span>  <span class="comment"># foo in Python calls foo in C++</span></span><br><span class="line">        Vector.lib.foo(self.vector)</span><br></pre></td></tr></table></figure>
+<h5 id="然后才是调用"><a href="#然后才是调用" class="headerlink" title="然后才是调用"></a>然后才是调用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> vector <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">a = Vector()</span><br><span class="line">b = c_point_t(<span class="number">10</span>, <span class="number">20</span>)</span><br><span class="line">a.push(b)</span><br><span class="line">a.foo()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(a)) :</span><br><span class="line">    print(a[i].x)</span><br><span class="line">    print(a[i].y)</span><br></pre></td></tr></table></figure>
+<h4 id="为Python写扩展"><a href="#为Python写扩展" class="headerlink" title="为Python写扩展"></a>为Python写扩展</h4><p>完成上述的操作后，我头很大，很难想象当项目稍微修改后，我们要跟随变化的代码量有多大！于是换了一种思路，为Python写扩展。</p>
+<h5 id="安装Python开发包"><a href="#安装Python开发包" class="headerlink" title="安装Python开发包"></a>安装Python开发包</h5><p><strong>yum install -y python36-devel</strong></p>
+<h5 id="修改数据交互文件"><a href="#修改数据交互文件" class="headerlink" title="修改数据交互文件"></a>修改数据交互文件</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;python3.6m/Python.h&gt;</span></span><br><span class="line"></span><br><span class="line">PyObject* foo()</span><br><span class="line">&#123;</span><br><span class="line">    PyObject* result = PyList_New(<span class="number">0</span>);</span><br><span class="line">    int i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; <span class="number">2</span>; j++) &#123;</span><br><span class="line">        PyObject* sub = PyList_New(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            PyList_Append(sub, Py_BuildValue(<span class="string">"&#123;s:i, s:i&#125;"</span>, <span class="string">"x"</span>, i, <span class="string">"y"</span>, <span class="number">100</span> - i));</span><br><span class="line">        &#125;</span><br><span class="line">        PyList_Append(result, sub);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="调用"><a href="#调用" class="headerlink" title="调用"></a>调用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">lib = cdll.LoadLibrary(<span class="string">'./extlist.so'</span>) <span class="comment"># class level loading lib</span></span><br><span class="line">lib.foo.restype = py_object</span><br><span class="line">b = lib.foo()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(b)) :</span><br><span class="line">   <span class="keyword">for</span> j <span class="keyword">in</span> range(len(b[i])) :</span><br><span class="line">      d = b[i][j]</span><br><span class="line">      print(d[<span class="string">'x'</span>])</span><br></pre></td></tr></table></figure>
+<p>很显然，第二种方式中，我已经封装了很复杂的结构了，如果用 c++ 来表示的话，将是：</p>
+<blockquote>
+<p>vector&lt;vector<point>&gt;</point></p>
+</blockquote>
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><h4 id="Python-C-混编时-Segment"><a href="#Python-C-混编时-Segment" class="headerlink" title="Python C 混编时 Segment"></a>Python C 混编时 Segment</h4><p>这个问题困扰了我有一段时间，开始一直在纠结是代码哪错了，后来恍然大悟，Python 和 C 的堆栈是完全不同的，而当我在交互大量数据的时候，Python GC 可能会把 C 的内存当作未使用，直接给释放了(尤其是上述第二种方案)，这就是问题所在。(Python GC 中使用的代龄后续专门开文章来说明，欢迎关注公众号 cn_isnap)<br>这里的解决方案其实有很多，内存能撑过Python前两代的检查就可了，或者是纯C管理。在这里我推荐一种粗暴的解决方案：<br>对于任何调用Python对象或Python C API的C代码，确保你首先已经正确地获取和释放了GIL。 这可以用 PyGILState_Ensure() 和 PyGILState_Release() 来做到，如下所示：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">/* Make sure we own the GIL */</span></span><br><span class="line">PyGILState_STATE state = PyGILState_Ensure();</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Use functions in the interpreter */</span></span><br><span class="line">...</span><br><span class="line"><span class="comment">/* Restore previous GIL state and return */</span></span><br><span class="line">PyGILState_Release(state);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/c/" rel="tag"># c</a>
+          
+            <a href="/tags/c/" rel="tag"># c++</a>
+          
+            <a href="/tags/混编/" rel="tag"># 混编</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/25/深入浅出Golang关键字go-2/" rel="next" title="深入浅出Golang关键字go 2">
+                <i class="fa fa-chevron-left"></i> 深入浅出Golang关键字go 2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="三岁于辛">
+            
+              <p class="site-author-name" itemprop="name">三岁于辛</p>
+              <p class="site-description motion-element" itemprop="description">生于C 死于GO</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情推荐
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://blog.wx518.cn" title="秋月刀博客" target="_blank">秋月刀博客</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://promotion.aliyun.com/ntms/act/qwbk.html?userCode=ah93oeqq" title="阿里云主机低至2折" target="_blank">阿里云主机低至2折</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=ah93oeqq" title="最高￥1888云产品能用代金券" target="_blank">最高￥1888云产品能用代金券</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#相互调用的方式选择"><span class="nav-number">1.</span> <span class="nav-text">相互调用的方式选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#扩展-ctypes-类型"><span class="nav-number">1.1.</span> <span class="nav-text">扩展 ctypes 类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#编写-c-gt-python-的接口文件"><span class="nav-number">1.1.1.</span> <span class="nav-text">编写 c =&gt; python 的接口文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#编写-ctypes-类型文件"><span class="nav-number">1.1.2.</span> <span class="nav-text">编写 ctypes 类型文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#然后才是调用"><span class="nav-number">1.1.3.</span> <span class="nav-text">然后才是调用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为Python写扩展"><span class="nav-number">1.2.</span> <span class="nav-text">为Python写扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装Python开发包"><span class="nav-number">1.2.1.</span> <span class="nav-text">安装Python开发包</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改数据交互文件"><span class="nav-number">1.2.2.</span> <span class="nav-text">修改数据交互文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#调用"><span class="nav-number">1.2.3.</span> <span class="nav-text">调用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遇到的问题"><span class="nav-number">2.</span> <span class="nav-text">遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Python-C-混编时-Segment"><span class="nav-number">2.1.</span> <span class="nav-text">Python C 混编时 Segment</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">三岁于辛</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
