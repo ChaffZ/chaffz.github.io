@@ -355,7 +355,7 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/python/c/" itemprop="url" rel="index">
+                  <a href="/categories/后端/c/" itemprop="url" rel="index">
                     <span itemprop="name">c</span>
                   </a>
                 </span>
@@ -448,7 +448,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/11/25/深入浅出Golang关键字go-2/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/11/25/Golang学习笔记：当关键字“go”遇上“runtime” 2/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -467,7 +467,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/25/深入浅出Golang关键字go-2/" itemprop="url">深入浅出Golang关键字go 2</a></h1>
+                <a class="post-title-link" href="/2018/11/25/Golang学习笔记：当关键字“go”遇上“runtime” 2/" itemprop="url">Golang学习笔记：当关键字“go”遇上“runtime” 2</a></h1>
         
 
         <div class="post-meta">
@@ -520,17 +520,6 @@
 
                 
                 
-                  ， 
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/Golang/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
               
             </span>
           
@@ -563,7 +552,7 @@
       
         
           
-            <p>前文“<a href="http://blog.isnap.cn/2018/11/19/Golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%BD%93%E5%85%B3%E9%94%AE%E5%AD%97%E2%80%9Cgo%E2%80%9D%E9%81%87%E4%B8%8A%E2%80%9Cruntime%E2%80%9D/" target="_blank" rel="noopener">深入浅出Golang关键字”go”</a>”最后留了几个问题：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">    runtime.GOMAXPROCS(1)</span><br><span class="line">    for i := 0; i &lt; 10; i++ &#123;</span><br><span class="line">        go println(i)</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">runtime.Gosched()</span><br><span class="line">这一行代码。</span><br><span class="line">如果注释掉结果会怎样？？</span><br><span class="line">如果把这一行换成 runtime.Goexit() 或者 os.Exit(0) 又会是如何呢？？</span><br></pre></td></tr></table></figure></p>
+            <p>前文“<a href="http://blog.isnap.cn/2018/11/19/Golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%BD%93%E5%85%B3%E9%94%AE%E5%AD%97%E2%80%9Cgo%E2%80%9D%E9%81%87%E4%B8%8A%E2%80%9Cruntime%E2%80%9D/" target="_blank" rel="noopener">Golang学习笔记：当关键字“go”遇上“runtime”</a>”最后留了几个问题：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">    runtime.GOMAXPROCS(1)</span><br><span class="line">    for i := 0; i &lt; 10; i++ &#123;</span><br><span class="line">        go println(i)</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">runtime.Gosched()</span><br><span class="line">这一行代码。</span><br><span class="line">如果注释掉结果会怎样？？</span><br><span class="line">如果把这一行换成 runtime.Goexit() 或者 os.Exit(0) 又会是如何呢？？</span><br></pre></td></tr></table></figure></p>
 <p>如果有关注到这个问题并且自己尝试过的朋友会发现：</p>
 <ol>
 <li>如果把 <strong>runtime.Gosched()</strong> 注释掉，结果会是 0~9；</li>
@@ -691,17 +680,6 @@
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/后端/Golang/" itemprop="url" rel="index">
                     <span itemprop="name">Golang</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/Golang/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
                   </a>
                 </span>
 
@@ -1222,7 +1200,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
