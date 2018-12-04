@@ -279,6 +279,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/04/Docker学习笔记：docker-compose-中难缠的网络问题/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="三岁于辛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="三岁于辛博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/04/Docker学习笔记：docker-compose-中难缠的网络问题/" itemprop="url">Docker学习笔记：docker compose 中难缠的网络问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-04T20:57:21+08:00">
+                2018-12-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/docker/" itemprop="url" rel="index">
+                    <span itemprop="name">docker</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index">
+                    <span itemprop="name">docker</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/network/" itemprop="url" rel="index">
+                    <span itemprop="name">network</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>越来越多的开发者被带到Docker的使用中，至少我的所有开发环境都是Docker的，<a href="https://github.com/chaffz/dockers" target="_blank" rel="noopener">Github直达</a>。本人习惯用 Docker compose 来管理，在各种各样的容器之间，网络问题时不时的就蹦出来，现我就过程中遇到的问题做出自己的总结。</p>
+<h4 id="同一个-docker-compose-文件中的容器如何互联？"><a href="#同一个-docker-compose-文件中的容器如何互联？" class="headerlink" title="同一个 docker-compose 文件中的容器如何互联？"></a>同一个 docker-compose 文件中的容器如何互联？</h4><p>在整理开发环境时，我习惯性的把php和nginx放在一起，方便启动时能够同时启动。所以会把 nginx 和 php 放在同一个 docker-compose 中。那么如何保证 nginx 能转发到 php 呢？</p>
+<h5 id="links"><a href="#links" class="headerlink" title="links"></a>links</h5><figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">"3"</span></span><br><span class="line">services:</span><br><span class="line">  nginx:</span><br><span class="line">    image: nginx:<span class="number">1.15</span></span><br><span class="line">    links:</span><br><span class="line">      - <span class="string">"php7cache"</span></span><br><span class="line">  php7cache:</span><br><span class="line">    build: .</span><br></pre></td></tr></table></figure>
+<p>这样nginx和php就能简单的通信了。当然，我们的php不会是独立的，一般还会用到mysql，但是又不是必要的，所以我又单独启动了一个mysql容器。独立的mysql容器，独立的docker-compose文件。那么这时候又要怎样连接呢？</p>
+<h5 id="external-links"><a href="#external-links" class="headerlink" title="external_links"></a>external_links</h5><p>external_links是连接外部网络的方式，这种方案来源于网上，如下：<br><figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  ...</span><br><span class="line">  <span class="comment"># other</span></span><br><span class="line">  ...</span><br><span class="line">  php7cache:</span><br><span class="line">    build: .</span><br><span class="line">    networks:</span><br><span class="line">      - default</span><br><span class="line">      - app_net</span><br><span class="line">    external_links:</span><br><span class="line">      - redis</span><br><span class="line">      - mysql</span><br><span class="line">networks:</span><br><span class="line">  app_net:  <span class="comment"># 定义了一个 app_net 的网络</span></span><br><span class="line">    external: true <span class="comment"># 并标识为外部网络</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="networks"><a href="#networks" class="headerlink" title="networks"></a>networks</h5><p>在使用external_links这个过程中我意识的，这生效的极有可能不是external_links，而是在networks服务生效了，于是做了尝试，发现真的可以，我的理解是 <strong>app_net</strong> 其实是重新定义了一个网络，然后在容器的net_works参数上指定加入了 <strong>app_net</strong> 中。<br><figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">"3"</span></span><br><span class="line">services:</span><br><span class="line">    flume:</span><br><span class="line">        image: probablyfine/flume</span><br><span class="line">        networks:</span><br><span class="line">            - default</span><br><span class="line">            - kafka_default</span><br><span class="line">networks:</span><br><span class="line">    kafka_default:</span><br><span class="line">        external: true</span><br></pre></td></tr></table></figure></p>
+<p>细心的同学可能已经发现了，在上面的代码中我并没有再使用app_net，而是直接使用了kafka_default。为什么？其实，当使用 “<strong>docker network ls</strong>” 命令时，我们会发现在当指定 app_net 时，列表中会包含 app_net 网络，同时，也会有各种容器的 default 网络，如：kafka_default。为了偷懒，我就直接使用了 kafka_default。</p>
+<h5 id="extra-hosts"><a href="#extra-hosts" class="headerlink" title="extra_hosts"></a>extra_hosts</h5><p>最近，又有一个需求，我的docker需要使用与宿主机同一网络的其它服务。尝试很多方法，改hosts、创建新网络，发现都无法解决。后来才发现还有extra_hosts参数，尝试了一下，发现真的可行。<br><figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">"3"</span></span><br><span class="line">services:</span><br><span class="line">    flume_events:</span><br><span class="line">        image: probablyfine/flume</span><br><span class="line">        container_name: flume_events</span><br><span class="line">        environment:</span><br><span class="line">            FLUME_AGENT_NAME: agent</span><br><span class="line">        extra_hosts:</span><br><span class="line">            - <span class="string">"test-1:10.3.8.49"</span></span><br></pre></td></tr></table></figure></p>
+<p>指定extra_hosts后，在宿主机上修改host。然后在flume的配置文件中指定kafka的链接为 <strong>test-1:9092</strong>。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/02/Python与C混合编程时遇到的问题及解决方案-持续更新/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1182,42 +1365,6 @@
               <p class="site-description motion-element" itemprop="description">生于C 死于GO</p>
           </div>
 
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
-              
-                <a href="/archives/">
-              
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">日志</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-categories">
-                <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
-                  <span class="site-state-item-name">分类</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">15</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
-            
-
-          </nav>
 
           
 
