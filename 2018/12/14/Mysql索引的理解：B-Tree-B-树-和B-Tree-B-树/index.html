@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Golang,runtime,关键字,go,">
+  <meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree,">
 
 
 
@@ -86,18 +86,18 @@
 
 
 
-<meta name="description" content="前文“Golang学习笔记：当关键字“go”遇上“runtime””最后留了几个问题：12345678910111213func main() &amp;#123;    runtime.GOMAXPROCS(1)    for i := 0; i &amp;lt; 10; i++ &amp;#123;        go println(i)    &amp;#125;    runtime.Gosched()    time">
-<meta name="keywords" content="Golang,runtime,关键字,go">
+<meta name="description" content="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树数据结构说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。 上面的描述中有几点信息：  树高H影响查找次数； 上一点中的每一次查找还会涉及到磁盘I/O;   记 N 为 B-tree 中的 Key 的数据量，d 为">
+<meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Golang学习笔记：当关键字“go”遇上“runtime” 2">
-<meta property="og:url" content="http://chaffz.github.io/2018/11/25/Golang学习笔记：当关键字“go”遇上“runtime” 2/index.html">
+<meta property="og:title" content="Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)">
+<meta property="og:url" content="http://chaffz.github.io/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/index.html">
 <meta property="og:site_name" content="三岁于辛博客">
-<meta property="og:description" content="前文“Golang学习笔记：当关键字“go”遇上“runtime””最后留了几个问题：12345678910111213func main() &amp;#123;    runtime.GOMAXPROCS(1)    for i := 0; i &amp;lt; 10; i++ &amp;#123;        go println(i)    &amp;#125;    runtime.Gosched()    time">
+<meta property="og:description" content="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树数据结构说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。 上面的描述中有几点信息：  树高H影响查找次数； 上一点中的每一次查找还会涉及到磁盘I/O;   记 N 为 B-tree 中的 Key 的数据量，d 为">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-05T07:17:32.979Z">
+<meta property="og:updated_time" content="2018-12-14T09:44:18.545Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Golang学习笔记：当关键字“go”遇上“runtime” 2">
-<meta name="twitter:description" content="前文“Golang学习笔记：当关键字“go”遇上“runtime””最后留了几个问题：12345678910111213func main() &amp;#123;    runtime.GOMAXPROCS(1)    for i := 0; i &amp;lt; 10; i++ &amp;#123;        go println(i)    &amp;#125;    runtime.Gosched()    time">
+<meta name="twitter:title" content="Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)">
+<meta name="twitter:description" content="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树数据结构说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。 上面的描述中有几点信息：  树高H影响查找次数； 上一点中的每一次查找还会涉及到磁盘I/O;   记 N 为 B-tree 中的 Key 的数据量，d 为">
 
 
 
@@ -127,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://chaffz.github.io/2018/11/25/Golang学习笔记：当关键字“go”遇上“runtime” 2/">
+  <link rel="canonical" href="http://chaffz.github.io/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/">
 
 
 
 
 
-  <title>Golang学习笔记：当关键字“go”遇上“runtime” 2 | 三岁于辛博客</title>
+  <title>Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树) | 三岁于辛博客</title>
   
 
 
@@ -280,7 +280,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/11/25/Golang学习笔记：当关键字“go”遇上“runtime” 2/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -297,7 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Golang学习笔记：当关键字“go”遇上“runtime” 2</h1>
+          <h1 class="post-title" itemprop="name headline">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</h1>
         
 
         <div class="post-meta">
@@ -309,8 +309,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-25T21:35:07+08:00">
-                2018-11-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-14T17:40:17+08:00">
+                2018-12-14
               </time>
             
 
@@ -343,8 +343,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/Golang/" itemprop="url" rel="index">
-                    <span itemprop="name">Golang</span>
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
                   </a>
                 </span>
 
@@ -354,8 +354,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang/" itemprop="url" rel="index">
-                    <span itemprop="name">Golang</span>
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
                   </a>
                 </span>
 
@@ -365,8 +365,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
                   </a>
                 </span>
 
@@ -402,19 +402,34 @@
       
 
       
-        <p>前文“<a href="http://blog.isnap.cn/2018/11/19/Golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%BD%93%E5%85%B3%E9%94%AE%E5%AD%97%E2%80%9Cgo%E2%80%9D%E9%81%87%E4%B8%8A%E2%80%9Cruntime%E2%80%9D/" target="_blank" rel="noopener">Golang学习笔记：当关键字“go”遇上“runtime”</a>”最后留了几个问题：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">    runtime.GOMAXPROCS(1)</span><br><span class="line">    for i := 0; i &lt; 10; i++ &#123;</span><br><span class="line">        go println(i)</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">runtime.Gosched()</span><br><span class="line">这一行代码。</span><br><span class="line">如果注释掉结果会怎样？？</span><br><span class="line">如果把这一行换成 runtime.Goexit() 或者 os.Exit(0) 又会是如何呢？？</span><br></pre></td></tr></table></figure></p>
-<p>如果有关注到这个问题并且自己尝试过的朋友会发现：</p>
+        <h3 id="为什么会使用B-Tree和B-Tree，而不是二叉树、红黑树"><a href="#为什么会使用B-Tree和B-Tree，而不是二叉树、红黑树" class="headerlink" title="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树"></a>为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。</strong></p>
+<p>上面的描述中有几点信息：</p>
 <ol>
-<li>如果把 <strong>runtime.Gosched()</strong> 注释掉，结果会是 0~9；</li>
-<li>如果换成 <strong>runtime.Goexit()</strong>，结果会是先输出 0~9，然后程序 panic;</li>
-<li>如果是 <strong>os.Exit(0)</strong>，则什么也不会输出。</li>
+<li>树高H影响查找次数；</li>
+<li>上一点中的每一次查找还会涉及到磁盘I/O;</li>
 </ol>
-<p>对于 0~9 的结果，很多人会奇怪，runtime.Gosched() 到底怎样影响到结果的？而 runtime.Goexit() 与 runtime.Gosched() 之间又存在怎样的区别呢？</p>
-<p>runtime.Gosched() 主要做了一件事就是尝试交出 P 操作权限，等待其它 gorotine 执行完成后再继续执行当前 gorotine，结合前文的 <strong>next</strong> 位置，则输出了 9 0~8 这样的结果。</p>
-<p><strong>但是当把这一行注释了，程序会卡在 time.Sleep 处，这时候 go 程序设计中的另一个东西出场了——sys monitor 线程，这是 go 语言设计中的唯一一个(主线程除外)独立的线程。它的作用是监控 gorotine 状态的。当主 goroutine 在 sleep 时，monitor 认为占用时间不符合预期，它会把 P 让出来，而自己则进入 P 的 gorotine 队列等待。那么问题来了，P 有 next 位置呀，所以这时候 main gorotine 就占了 next 位置。从而导致输出顺序变成 0~9了。</strong></p>
-<p>Goexit() 与 Gosched() 唯一不同的地方则是它会丢弃此行代码后的所有堆栈，<br>并且如果丢弃的是 main gorotine 的话会 panic。结果也自然是输出 0~9 然后 panic 了。</p>
-<p>os.Exit() 自不必多说了。</p>
-<p>欢迎大家尝试并可和我讨论！！！<br>大家可关注公众号 cn_isnap 并留言！！</p>
+<blockquote>
+<p>记 N 为 B-tree 中的 Key 的数据量，d 为内节点出度的二分之一，则我们可以证明 $ H \leq \frac{\log_d(N + 1)}{2} $，渐进复杂度为 $ O(H) = O(log_dN) $。<br>d 为内节点出度，表示非根节点和叶子节点拥有最少的子女数，并且规定最大不能超过 2d。<strong>注意：这里也有文献会反过来表示，即最大为 d, 最少不能少于 $ \frac{d}{2} $</strong></p>
+</blockquote>
+<p>很明显，<strong>树高度H越高查询效率越低。</strong></p>
+<a id="more"></a>
+<p>回到问题上，我相信很多人已经猜到了为什么B树会比二叉树更合理了！但是这只是说明了一个层面的东西，<strong>高度越低查询次数越少。</strong></p>
+<h4 id="局部性原理与磁盘预读"><a href="#局部性原理与磁盘预读" class="headerlink" title="局部性原理与磁盘预读"></a>局部性原理与磁盘预读</h4><p>由于存储介质的特性，磁盘本身存取就比主存慢很多，再加上机械运动耗费，磁盘的存取速度往往是主存的几百分分之一，因此为了提高效率，要尽量减少磁盘I/O。为了达到这个目的，磁盘往往不是严格按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置开始，顺序向后读取一定长度的数据放入内存。这样做的理论依据是计算机科学中著名的局部性原理：<strong>当一个数据被用到时，其附近的数据也通常会马上被使用。</strong>由于磁盘顺序读取的效率很高（不需要寻道时间，只需很少的旋转时间），因此对于具有局部性的程序来说，预读可以提高I/O效率。<br>数据库系统的<strong>设计者巧妙利用了磁盘预读原理</strong>，将一个节点的大小设为等于一个页，这样每个节点只需要一次I/O就可以完全载入。为了达到这个目的，在实际实现B-Tree还需要使用如下技巧：<br><strong>每次新建节点时，直接申请一个页的空间，这样就保证一个节点物理上也存储在一个页里，加之计算机存储分配都是按页对齐的，就实现了一个node只需一次I/O。</strong></p>
+<h4 id="B-Tree-和-B-Tree-区别"><a href="#B-Tree-和-B-Tree-区别" class="headerlink" title="B-Tree 和 B+Tree 区别"></a>B-Tree 和 B+Tree 区别</h4><p><strong>最大上的不同是内节点不存储数据。</strong><br>另外，每个节点的指针数不一样，B-Tree 是<strong>数据隔开指针</strong>，上文提到过最大子女数是 2d，所以B-Tree的最大指针数是 2d+1；而B+Tree 是 2d。</p>
+<h3 id="Mysql不同索引实现"><a href="#Mysql不同索引实现" class="headerlink" title="Mysql不同索引实现"></a>Mysql不同索引实现</h3><p>通过上文两点，我们理解了为什么使用B树。但同样是B树，也有不同的使用。</p>
+<h4 id="聚集和非聚集"><a href="#聚集和非聚集" class="headerlink" title="聚集和非聚集"></a>聚集和非聚集</h4><p><strong>聚集与非聚集的主要区别可理解为索引的叶子节点中存储是真实的数据还只是指针。</strong>这一点，在MyISAM和InnoDB的主键之间表现是不同的。MyISAM使用的是非聚集，最好的表现在MyISAM的存储文件分为索引文件(.MYI)和数据文件(.MYD)，而InnoDB是索引和数据在一个文件里。</p>
+<blockquote>
+<p>上文可理解MyISAM和InnoDB区别之：</p>
+<ol>
+<li>存储的文件内容不一样；</li>
+<li>因为InnoDB是根据主键聚集数据的，所以在<strong>创建InnoDB表时必需要有主键</strong>；</li>
+<li>扩展一点：<strong>InnoDB辅助索引是根据主键值聚集的</strong>；什么意思？就是InnoDB的非主键索引的叶子节点里存储的是主键的值；</li>
+</ol>
+</blockquote>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="http://blog.codinglabs.org/articles/theory-of-mysql-index.html" target="_blank" rel="noopener">MySQL索引背后的数据结构及算法原理</a></li>
+<li><a href="https://www.zhihu.com/question/19836260/answer/17906104" target="_blank" rel="noopener">为什么 B-tree 在不同著作中度的定义有一定差别</a></li>
+</ul>
 
       
     </div>
@@ -432,13 +447,17 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Golang/" rel="tag"># Golang</a>
+            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
           
-            <a href="/tags/runtime/" rel="tag"># runtime</a>
+            <a href="/tags/InnoDB/" rel="tag"># InnoDB</a>
           
-            <a href="/tags/关键字/" rel="tag"># 关键字</a>
+            <a href="/tags/MyISAM/" rel="tag"># MyISAM</a>
           
-            <a href="/tags/go/" rel="tag"># go</a>
+            <a href="/tags/索引/" rel="tag"># 索引</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B-Tree</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B+Tree</a>
           
         </div>
       
@@ -451,8 +470,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/" rel="next" title="Golang学习笔记：当关键字“go”遇上“runtime”">
-                <i class="fa fa-chevron-left"></i> Golang学习笔记：当关键字“go”遇上“runtime”
+              <a href="/2018/12/04/Docker学习笔记：docker-compose-中难缠的网络问题/" rel="next" title="Docker学习笔记：docker compose 中难缠的网络问题">
+                <i class="fa fa-chevron-left"></i> Docker学习笔记：docker compose 中难缠的网络问题
               </a>
             
           </div>
@@ -460,10 +479,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/12/02/Python与C混合编程时遇到的问题及解决方案-持续更新/" rel="prev" title="Python与C混合编程时遇到的问题及解决方案(持续更新)">
-                Python与C混合编程时遇到的问题及解决方案(持续更新) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -515,8 +530,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -609,6 +633,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么会使用B-Tree和B-Tree，而不是二叉树、红黑树"><span class="nav-number">1.</span> <span class="nav-text">为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据结构"><span class="nav-number">1.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局部性原理与磁盘预读"><span class="nav-number">1.2.</span> <span class="nav-text">局部性原理与磁盘预读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-和-B-Tree-区别"><span class="nav-number">1.3.</span> <span class="nav-text">B-Tree 和 B+Tree 区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql不同索引实现"><span class="nav-number">2.</span> <span class="nav-text">Mysql不同索引实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#聚集和非聚集"><span class="nav-number">2.1.</span> <span class="nav-text">聚集和非聚集</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
