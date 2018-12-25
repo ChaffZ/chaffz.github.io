@@ -279,6 +279,193 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="三岁于辛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="三岁于辛博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/" itemprop="url">Mysql存储引擎MyISAM和InnoDB的区别</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-25T15:34:43+08:00">
+                2018-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>在整理文章《<a href="http://blog.isnap.cn/2018/12/14/Mysql%E7%B4%A2%E5%BC%95%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9AB-Tree-B-%E6%A0%91-%E5%92%8CB-Tree-B-%E6%A0%91/" target="_blank" rel="noopener">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</a>》时，突然对<strong>“MyISAM和InnoDB存储引擎区别”</strong>有了一个新的理解：<strong>两者之间区别之间是有很大关联性的</strong>。后面我会慢慢说明。</p>
+<h3 id="构成上的区别"><a href="#构成上的区别" class="headerlink" title="构成上的区别"></a>构成上的区别</h3><p>Mysql 在设计时把表信息和数据是分开，这在 <em>Mysql8</em> 以前表现为 .frm(表信息元数据)以及 <strong>xxx</strong> 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。</p>
+<h4 id="索引和数据的存储结构区别"><a href="#索引和数据的存储结构区别" class="headerlink" title="索引和数据的存储结构区别"></a>索引和数据的存储结构区别</h4><ul>
+<li>MyISAM 将索引和数据分别保存在 .MYI(索引) 和 .MYD(数据) 中</li>
+<li>InnoDB 则将索引和数据保存在了相同的文件 .ibd 或者 ibdata 中，.ibd 看似是 ibdata 的缩写，但其它含义是不一样，首先，.ibd 我用了 “.” 表示后缀的意思，但是 ibdata 并没有；其次，.ibd 是独享表空间，ibdata 是共享表空间，可通过 innodb_file_per_table 来修改。</li>
+</ul>
+<blockquote>
+<p>注意：上文中突出了 Mysql8 以前，是因为 Mysql8 已经将 .frm .opt 之类的文件放入到了事务表中进行维护，目的是很明显的。</p>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1614,7 +1801,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

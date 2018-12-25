@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Golang,runtime,关键字,go,">
+  <meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree,">
 
 
 
@@ -86,18 +86,18 @@
 
 
 
-<meta name="description" content="写在前面昨天，有人拿着下面这段代码，问题我结果为什么不是10个10？  当然，这道题的结果，我相信很大一部分人都会弄错。所以，我希望做错的人都能静下心来看完本人的分析！运行看结果  12345678func main() &amp;#123;    runtime.GOMAXPROCS(1)    for i := 0; i &amp;lt; 10; i++ &amp;#123;        go println(i)">
-<meta name="keywords" content="Golang,runtime,关键字,go">
+<meta name="description" content="在整理文章《Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)》时，突然对“MyISAM和InnoDB存储引擎区别”有了一个新的理解：两者之间区别之间是有很大关联性的。后面我会慢慢说明。 构成上的区别Mysql 在设计时把表信息和数据是分开，这在 Mysql8 以前表现为 .frm(表信息元数据)以及 xxx 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。 索">
+<meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Golang学习笔记：当关键字“go”遇上“runtime”">
-<meta property="og:url" content="http://chaffz.github.io/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/index.html">
+<meta property="og:title" content="Mysql存储引擎MyISAM和InnoDB的区别">
+<meta property="og:url" content="http://chaffz.github.io/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/index.html">
 <meta property="og:site_name" content="三岁于辛博客">
-<meta property="og:description" content="写在前面昨天，有人拿着下面这段代码，问题我结果为什么不是10个10？  当然，这道题的结果，我相信很大一部分人都会弄错。所以，我希望做错的人都能静下心来看完本人的分析！运行看结果  12345678func main() &amp;#123;    runtime.GOMAXPROCS(1)    for i := 0; i &amp;lt; 10; i++ &amp;#123;        go println(i)">
+<meta property="og:description" content="在整理文章《Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)》时，突然对“MyISAM和InnoDB存储引擎区别”有了一个新的理解：两者之间区别之间是有很大关联性的。后面我会慢慢说明。 构成上的区别Mysql 在设计时把表信息和数据是分开，这在 Mysql8 以前表现为 .frm(表信息元数据)以及 xxx 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。 索">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-05T07:17:43.260Z">
+<meta property="og:updated_time" content="2018-12-25T07:36:07.026Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Golang学习笔记：当关键字“go”遇上“runtime”">
-<meta name="twitter:description" content="写在前面昨天，有人拿着下面这段代码，问题我结果为什么不是10个10？  当然，这道题的结果，我相信很大一部分人都会弄错。所以，我希望做错的人都能静下心来看完本人的分析！运行看结果  12345678func main() &amp;#123;    runtime.GOMAXPROCS(1)    for i := 0; i &amp;lt; 10; i++ &amp;#123;        go println(i)">
+<meta name="twitter:title" content="Mysql存储引擎MyISAM和InnoDB的区别">
+<meta name="twitter:description" content="在整理文章《Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)》时，突然对“MyISAM和InnoDB存储引擎区别”有了一个新的理解：两者之间区别之间是有很大关联性的。后面我会慢慢说明。 构成上的区别Mysql 在设计时把表信息和数据是分开，这在 Mysql8 以前表现为 .frm(表信息元数据)以及 xxx 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。 索">
 
 
 
@@ -127,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://chaffz.github.io/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/">
+  <link rel="canonical" href="http://chaffz.github.io/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/">
 
 
 
 
 
-  <title>Golang学习笔记：当关键字“go”遇上“runtime” | 三岁于辛博客</title>
+  <title>Mysql存储引擎MyISAM和InnoDB的区别 | 三岁于辛博客</title>
   
 
 
@@ -280,7 +280,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -297,7 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Golang学习笔记：当关键字“go”遇上“runtime”</h1>
+          <h1 class="post-title" itemprop="name headline">Mysql存储引擎MyISAM和InnoDB的区别</h1>
         
 
         <div class="post-meta">
@@ -309,8 +309,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-19T20:49:25+08:00">
-                2018-11-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-25T15:34:43+08:00">
+                2018-12-25
               </time>
             
 
@@ -343,8 +343,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/Golang/" itemprop="url" rel="index">
-                    <span itemprop="name">Golang</span>
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
                   </a>
                 </span>
 
@@ -354,8 +354,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang/" itemprop="url" rel="index">
-                    <span itemprop="name">Golang</span>
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
                   </a>
                 </span>
 
@@ -365,8 +365,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
                   </a>
                 </span>
 
@@ -402,28 +402,47 @@
       
 
       
-        <h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>昨天，有人拿着下面这段代码，问题我结果为什么不是10个10？</p>
+        <p>在整理文章《<a href="http://blog.isnap.cn/2018/12/14/Mysql%E7%B4%A2%E5%BC%95%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9AB-Tree-B-%E6%A0%91-%E5%92%8CB-Tree-B-%E6%A0%91/" target="_blank" rel="noopener">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</a>》时，突然对<strong>“MyISAM和InnoDB存储引擎区别”</strong>有了一个新的理解：<strong>两者之间区别之间是有很大关联性的</strong>。后面我会慢慢说明。</p>
+<h3 id="构成上的区别"><a href="#构成上的区别" class="headerlink" title="构成上的区别"></a>构成上的区别</h3><p>Mysql 在设计时把表信息和数据是分开，这在 <em>Mysql8</em> 以前表现为 .frm(表信息元数据)以及 <strong>xxx</strong> 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。</p>
+<h4 id="索引和数据的存储结构区别"><a href="#索引和数据的存储结构区别" class="headerlink" title="索引和数据的存储结构区别"></a>索引和数据的存储结构区别</h4><ul>
+<li>MyISAM 将索引和数据分别保存在 .MYI(索引) 和 .MYD(数据) 中</li>
+<li>InnoDB 则将索引和数据保存在了相同的文件 .ibd 或者 ibdata 中，.ibd 看似是 ibdata 的缩写，但其它含义是不一样，首先，.ibd 我用了 “.” 表示后缀的意思，但是 ibdata 并没有；其次，.ibd 是独享表空间，ibdata 是共享表空间，可通过 innodb_file_per_table 来修改。</li>
+</ul>
 <blockquote>
-<p>当然，这道题的结果，我相信很大一部分人都会弄错。<br>所以，我希望做错的人都能静下心来看完本人的分析！<a href="https://play.golang.org/p/Llr9LnQ4YlT" target="_blank" rel="noopener">运行看结果</a></p>
+<p>注意：上文中突出了 Mysql8 以前，是因为 Mysql8 已经将 .frm .opt 之类的文件放入到了事务表中进行维护，目的是很明显的。</p>
 </blockquote>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        <span class="keyword">go</span> <span class="built_in">println</span>(i)</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<h4 id="从源码入手"><a href="#从源码入手" class="headerlink" title="从源码入手"></a>从源码入手</h4><p>此例中 <strong>“runtime”</strong> 的问题暂且不详说，后面会再来分析，但是，必需要明白的是 <strong>runtime. GOMAXPROCS(1)</strong> 强行指定了只创建一个 “P” 来处理并发，这使得例子中的 10 个 goroutine 会是串行的。接下来，我们就来一点一点剖析关键字 “go”！</p>
-<h5 id="知其然，知其所以然"><a href="#知其然，知其所以然" class="headerlink" title="知其然，知其所以然"></a>知其然，知其所以然</h5><p>问我问题的人，其实也知道要小心的处理 for 循环中变量，但是他却不了解哪种情况下的变量才是要真正小心行事的。我相信还有很多人会把例子和下面的代码理解混了：<a href="https://play.golang.org/p/67AY2f0S2xi" target="_blank" rel="noopener">运行看结果</a><br><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            <span class="built_in">println</span>(i)</span><br><span class="line">        &#125;()</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>结果显示：10个10</p>
+<p>上文说到了，MyISAM 存储引擎把索引和数据分开存放，但是在实际使用过程它俩是无法分开的，因为通过索引要能找到数据，这里是本文整理的第二个区别。</p>
+<h4 id="索引实现区别"><a href="#索引实现区别" class="headerlink" title="索引实现区别"></a>索引实现区别</h4><ul>
+<li>首先，二者都是使用 B+ tree 实现的，但是在叶子结点中存储的数据是不一样的，MyISAM 存储的是数据行的地址，而 InnoDB 不一定，为什么说不一定，看下一条；</li>
+<li>MyISAM 索引和数据分开，所以它的索引都是存储的数据行地址，但是 InnoDB 不同，对于主键，它存储的是整个数据，而辅助索引存储的是主键ID，这里引申出下一条；</li>
+<li>InnoDB 必需有主键，当然，你可以说你不创建，但是引擎会默认给你加上一个 6 字节的隐藏主键，<strong>建议开发者明确指定 InnoDB 表主键</strong>；</li>
+<li>怎么记索引实现区别，两个词：<strong>“聚集”、“非聚集”</strong>。</li>
+</ul>
+<h4 id="可移植性、备份及恢复"><a href="#可移植性、备份及恢复" class="headerlink" title="可移植性、备份及恢复"></a>可移植性、备份及恢复</h4><ul>
+<li>MyISAM 数据文件可被压缩，存储空间较小。备份恢复可拷贝文件；</li>
+<li>InnoDB 也可以拷贝文件，但是数据量大时就麻烦;</li>
+<li>都可 mysqldump 和 binlog。<blockquote>
+<p>MyISAM 支持三种不同的存储格式：静态表(默认，但是注意数据末尾不能有空格，会被去掉)、动态表、压缩表。</p>
 </blockquote>
-<p>仔细对比上述的两段代码，会发现区别仅仅是 “go” 关键字后的函数有区别而已。那么这一点小区别，为什么会带来这么大的区别呢？我们都知道 “go” 是创建了 goroutine ，但是对于计算机而言，goroutine 只是语言封装的语法糖而已，<strong>对于计算机依旧是识别指令及内存里的值而已</strong>。那么 goroutine 在被创建后，留给计算机是什么样的内存布局(数据结构)呢？</p>
-<p>在 <strong>runtime2.go:338</strong> (<a href="https://golang.org/src/runtime/runtime2.go?h=type%20g%20struct" target="_blank" rel="noopener">type g struct</a>) 定义，打开文件后，你会看到有很多的信息，但是，对于我们当前需要理解的是：编译器会把 go 后面的方法和参数打包在 goroutine 里，在上述例子中，关注如下参数：<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> g <span class="keyword">struct</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    FuncVal*    fnstart;        <span class="comment">// goroutine运行的函数</span></span><br><span class="line">    void*    param;        <span class="comment">// 用于传递参数，睡眠时其它goroutine设置param，唤醒时此goroutine可以获取</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>也就是说，运行到 go 的时候，编译器就已经把 goroutine 需要运行的参数与方法都保存了，对于 demo 1 来说就是保存了 { println,  current_i }，而 demo 2 保存的是 { main.func_xxx, nil }，这里读者可能会注意到，第二个并没有把 i 传入到匿名函数中，但是引用的时候并没有发生 panic 。为什么？因为这里有内存逃逸，这也是为什么 demo 2 会输出 10 个 10 的原因，本次不展开细说。只需要记住一点：<strong>编译器会把 go 后面跟着的参数与函数都打包成了对象，等待系统调度。</strong></p>
-<h5 id="为什么？？"><a href="#为什么？？" class="headerlink" title="为什么？？"></a>为什么？？</h5><p>本文说到这，其实只说了小部分，并没有说为什么 demo 1 的结果会与大家想象的差很多。虽说 GOMAXPROCS 为 1 导致所有的 goroutine 变成了串行。可是结果也不是大家想象的 0 ~ 9。为什么？？</p>
-<p>其实，go 在把 goroutine 放入队列(go sched 内容会有另外的篇幅来说明)的时候还做了一件很特别的事：<strong>proc:4799 (<a href="https://golang.org/src/runtime/proc.go?h=func%20runqput" target="_blank" rel="noopener">next</a>)</strong>，代码内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if next &#123;</span><br><span class="line">retryNext:</span><br><span class="line">    oldnext := _p_.runnext</span><br><span class="line">    if !_p_.runnext.cas(oldnext, guintptr(unsafe.Pointer(gp))) &#123;</span><br><span class="line">        goto retryNext</span><br><span class="line">    &#125;</span><br><span class="line">    if oldnext == 0 &#123;</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line">    // Kick the old runnext out to the regular run queue.</span><br><span class="line">    gp = oldnext.ptr()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这段代码的意思是 go 会把每个 P 所管理的最后一个 goroutine 放入 <strong>next</strong> 位置。为什么？？</p>
-<p><strong>这是 go 设计认为或者是有过测试：如果一个 P 的 goroutine 队列在顺序执行的时候，因为 go sched 会有很多抢占或者调度。那么从被执行的概率上来分析的话，放入一个 next 位置可使得每个 goroutine 的执行概率是相当的。</strong>本文不细述！</p>
-<p>这个 next 位置也就解释了 demo 1 的结果为什么会是 <strong>9 — 0~8</strong>。本文到这已经说明了前面的问题，但是，demo 中出现了 </p>
-<p><strong>runtime.Gosched()</strong> </p>
-<p>这一行代码。<br>如果注释掉结果会怎样？？<br>如果把这一行换成 <strong>runtime.Goexit()</strong> 或者 <strong>os.Exit(0)</strong> 又会是如何呢？？</p>
-<p>欢迎大家尝试并可和我讨论！！！<br>大家可关注公众号 cn_isnap 并留言！！</p>
+</li>
+</ul>
+<h4 id="事务及外键"><a href="#事务及外键" class="headerlink" title="事务及外键"></a>事务及外键</h4><ul>
+<li>MyISAM 不支持事务和外键；</li>
+<li>InnoDB 支持事务和外键。</li>
+</ul>
+<h4 id="表锁差异"><a href="#表锁差异" class="headerlink" title="表锁差异"></a>表锁差异</h4><ul>
+<li>MyISAM 只支持表级锁，用户在操作 MyISAM 表时，select，update，delete，insert 语句都会给表自动加锁，如果加锁以后的表满足 insert 并发的情况下，可以在表的尾部插入新的数据。</li>
+<li>InnoDB 支持事务和行级锁，是 InnoDB 的最大特色。行锁大幅度提高了多用户并发操作的新能。但是 InnoDB的行锁，只是在 WHERE 的主键是有效的，非主键的 WHERE 都会锁全表的。</li>
+</ul>
+<h4 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h4><ul>
+<li>MyISAM 支持 FULLTEXT 类型的全文索引</li>
+<li>InnoDB 不支持 FULLTEXT 类型的全文索引，但是 InnoDB 可以使用 sphinx 插件支持全文索引，并且效果更好。</li>
+</ul>
+<h4 id="表的具体行数"><a href="#表的具体行数" class="headerlink" title="表的具体行数"></a>表的具体行数</h4><ul>
+<li>MyISAM 保存有表的总行数，如果 <em>select count() from table;</em> 会直接取出出该值。</li>
+<li>InnoDB 没有保存表的总行数，如果使用 <em>select count() from table;</em> 就会遍历整个表，消耗相当大，但是在加了 wehre 条件后，MyISAM 和 InnoDB 处理的方式都一样。</li>
+</ul>
 
       
     </div>
@@ -441,13 +460,17 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Golang/" rel="tag"># Golang</a>
+            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
           
-            <a href="/tags/runtime/" rel="tag"># runtime</a>
+            <a href="/tags/InnoDB/" rel="tag"># InnoDB</a>
           
-            <a href="/tags/关键字/" rel="tag"># 关键字</a>
+            <a href="/tags/MyISAM/" rel="tag"># MyISAM</a>
           
-            <a href="/tags/go/" rel="tag"># go</a>
+            <a href="/tags/索引/" rel="tag"># 索引</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B-Tree</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B+Tree</a>
           
         </div>
       
@@ -460,8 +483,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/30/pyspider安装配置及使用/" rel="next" title="pyspider安装配置及使用">
-                <i class="fa fa-chevron-left"></i> pyspider安装配置及使用
+              <a href="/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/" rel="next" title="Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)">
+                <i class="fa fa-chevron-left"></i> Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)
               </a>
             
           </div>
@@ -469,10 +492,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/11/25/Golang学习笔记：当关键字“go”遇上“runtime” 2/" rel="prev" title="Golang学习笔记：当关键字“go”遇上“runtime” 2">
-                Golang学习笔记：当关键字“go”遇上“runtime” 2 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -637,7 +656,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#写在前面"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从源码入手"><span class="nav-number">2.</span> <span class="nav-text">从源码入手</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#知其然，知其所以然"><span class="nav-number">2.1.</span> <span class="nav-text">知其然，知其所以然</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么？？"><span class="nav-number">2.2.</span> <span class="nav-text">为什么？？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#构成上的区别"><span class="nav-number">1.</span> <span class="nav-text">构成上的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#索引和数据的存储结构区别"><span class="nav-number">1.1.</span> <span class="nav-text">索引和数据的存储结构区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#索引实现区别"><span class="nav-number">1.2.</span> <span class="nav-text">索引实现区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可移植性、备份及恢复"><span class="nav-number">1.3.</span> <span class="nav-text">可移植性、备份及恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事务及外键"><span class="nav-number">1.4.</span> <span class="nav-text">事务及外键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表锁差异"><span class="nav-number">1.5.</span> <span class="nav-text">表锁差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全文索引"><span class="nav-number">1.6.</span> <span class="nav-text">全文索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表的具体行数"><span class="nav-number">1.7.</span> <span class="nav-text">表的具体行数</span></a></li></ol></li></ol></div>
             
 
           </div>
