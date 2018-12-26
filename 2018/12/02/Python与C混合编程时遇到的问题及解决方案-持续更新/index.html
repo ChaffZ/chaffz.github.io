@@ -411,11 +411,9 @@
 <h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><h4 id="Python-C-混编时-Segment"><a href="#Python-C-混编时-Segment" class="headerlink" title="Python C 混编时 Segment"></a>Python C 混编时 Segment</h4><p>这个问题困扰了我有一段时间，开始一直在纠结是代码哪错了，后来恍然大悟，Python 和 C 的堆栈是完全不同的，而当我在交互大量数据的时候，Python GC 可能会把 C 的内存当作未使用，直接给释放了(尤其是上述第二种方案)，这就是问题所在。(Python GC 中使用的代龄后续专门开文章来说明，欢迎关注公众号 cn_isnap)<br>这里的解决方案其实有很多，内存能撑过Python前两代的检查就可了，或者是纯C管理。在这里我推荐一种粗暴的解决方案：<br>对于任何调用Python对象或Python C API的C代码，确保你首先已经正确地获取和释放了GIL。 这可以用 PyGILState_Ensure() 和 PyGILState_Release() 来做到，如下所示：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">/* Make sure we own the GIL */</span></span><br><span class="line">PyGILState_STATE state = PyGILState_Ensure();</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Use functions in the interpreter */</span></span><br><span class="line">...</span><br><span class="line"><span class="comment">/* Restore previous GIL state and return */</span></span><br><span class="line">PyGILState_Release(state);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
 
       
-    </div>
-
-    
-      <div>
-        
+      
+        <div>
+          
   <hr>
   <div class="post-gallery" itemscope="" itemtype="http://schema.org/ImageGallery">
     <a class="post-gallery-img fancybox" href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=ah93oeqq" rel="gallery_" target="_blank" itemscope="" itemtype="http://schema.org/ImageObject" itemprop="url">
@@ -423,8 +421,9 @@
     </a>
   </div>
 
-      </div>
-    
+        </div>
+      
+    </div>
     
     
     
