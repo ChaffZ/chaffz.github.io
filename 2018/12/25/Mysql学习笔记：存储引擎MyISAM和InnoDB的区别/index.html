@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree,">
 
 
 
@@ -86,17 +86,18 @@
 
 
 
-<meta name="description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta name="description" content="在整理文章《Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)》时，突然对“MyISAM和InnoDB存储引擎区别”有了一个新的理解：两者之间区别之间是有很大关联性的。后面我会慢慢说明。 构成上的区别Mysql 在设计时把表信息和数据是分开，这在 Mysql8 以前表现为 .frm(表信息元数据)以及 xxx 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。 索">
+<meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pyspider安装配置及使用">
-<meta property="og:url" content="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/index.html">
+<meta property="og:title" content="Mysql学习笔记：存储引擎MyISAM和InnoDB的区别">
+<meta property="og:url" content="http://chaffz.github.io/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/index.html">
 <meta property="og:site_name" content="三岁于辛博客">
-<meta property="og:description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta property="og:description" content="在整理文章《Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)》时，突然对“MyISAM和InnoDB存储引擎区别”有了一个新的理解：两者之间区别之间是有很大关联性的。后面我会慢慢说明。 构成上的区别Mysql 在设计时把表信息和数据是分开，这在 Mysql8 以前表现为 .frm(表信息元数据)以及 xxx 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。 索">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-22T13:05:49.005Z">
+<meta property="og:updated_time" content="2019-01-13T07:48:55.461Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pyspider安装配置及使用">
-<meta name="twitter:description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta name="twitter:title" content="Mysql学习笔记：存储引擎MyISAM和InnoDB的区别">
+<meta name="twitter:description" content="在整理文章《Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)》时，突然对“MyISAM和InnoDB存储引擎区别”有了一个新的理解：两者之间区别之间是有很大关联性的。后面我会慢慢说明。 构成上的区别Mysql 在设计时把表信息和数据是分开，这在 Mysql8 以前表现为 .frm(表信息元数据)以及 xxx 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。 索">
 
 
 
@@ -126,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/">
+  <link rel="canonical" href="http://chaffz.github.io/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/">
 
 
 
 
 
-  <title>pyspider安装配置及使用 | 三岁于辛博客</title>
+  <title>Mysql学习笔记：存储引擎MyISAM和InnoDB的区别 | 三岁于辛博客</title>
   
 
 
@@ -279,7 +280,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -296,7 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">pyspider安装配置及使用</h1>
+          <h1 class="post-title" itemprop="name headline">Mysql学习笔记：存储引擎MyISAM和InnoDB的区别</h1>
         
 
         <div class="post-meta">
@@ -308,8 +309,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-30T17:48:01+08:00">
-                2016-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-25T15:34:43+08:00">
+                2018-12-25
               </time>
             
 
@@ -318,6 +319,61 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -346,30 +402,47 @@
       
 
       
-        <h3 id="什么是-pyspider"><a href="#什么是-pyspider" class="headerlink" title="什么是 pyspider"></a>什么是 pyspider</h3><p>pyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。</p>
-<p>所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。</p>
-<p>为了达到5分钟更新，我们使用抓取最近更新页上面的最后更新时间，以此来判断页面是否需要再次抓取。</p>
-<p>可见，这个项目对于爬虫的监控和调度要求是非常高的。</p>
+        <p>在整理文章《<a href="http://blog.isnap.cn/2018/12/14/Mysql%E7%B4%A2%E5%BC%95%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9AB-Tree-B-%E6%A0%91-%E5%92%8CB-Tree-B-%E6%A0%91/" target="_blank" rel="noopener">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</a>》时，突然对<strong>“MyISAM和InnoDB存储引擎区别”</strong>有了一个新的理解：<strong>两者之间区别之间是有很大关联性的</strong>。后面我会慢慢说明。</p>
+<h3 id="构成上的区别"><a href="#构成上的区别" class="headerlink" title="构成上的区别"></a>构成上的区别</h3><p>Mysql 在设计时把表信息和数据是分开，这在 <em>Mysql8</em> 以前表现为 .frm(表信息元数据)以及 <strong>xxx</strong> 文件。这是为什么是 xxx 文件，因为这里是本文整理的第一个区别。</p>
+<h4 id="索引和数据的存储结构区别"><a href="#索引和数据的存储结构区别" class="headerlink" title="索引和数据的存储结构区别"></a>索引和数据的存储结构区别</h4><ul>
+<li>MyISAM 将索引和数据分别保存在 .MYI(索引) 和 .MYD(数据) 中</li>
+<li>InnoDB 则将索引和数据保存在了相同的文件 .ibd 或者 ibdata 中，.ibd 看似是 ibdata 的缩写，但其它含义是不一样，首先，.ibd 我用了 “.” 表示后缀的意思，但是 ibdata 并没有；其次，.ibd 是独享表空间，ibdata 是共享表空间，可通过 innodb_file_per_table 来修改。</li>
+</ul>
+<blockquote>
+<p>注意：上文中突出了 Mysql8 以前，是因为 Mysql8 已经将 .frm .opt 之类的文件放入到了事务表中进行维护，目的是很明显的。</p>
+</blockquote>
 <a id="more"></a>
-<h3 id="pyspider-依赖的环境"><a href="#pyspider-依赖的环境" class="headerlink" title="pyspider 依赖的环境"></a>pyspider 依赖的环境</h3><p>首先需要使用 python ，至于什么版本，按个人经验来说，当然是推荐 python 2.7 了！！~因为本人曾经装的时候，被 3 坑了好久，最后不得不回退 python 才安装成功。还有，就是最好使用 32 位的 python。别问我为什么~~</p>
-<blockquote>
-<p>最新的 pyspider 依赖包中有对 pip 版本有需求的，所以需要使用如下命令行来更新 pip 版本：</p>
+<p>上文说到了，MyISAM 存储引擎把索引和数据分开存放，但是在实际使用过程它俩是无法分开的，因为通过索引要能找到数据，这里是本文整理的第二个区别。</p>
+<h4 id="索引实现区别"><a href="#索引实现区别" class="headerlink" title="索引实现区别"></a>索引实现区别</h4><ul>
+<li>首先，二者都是使用 B+ tree 实现的，但是在叶子结点中存储的数据是不一样的，MyISAM 存储的是数据行的地址，而 InnoDB 不一定，为什么说不一定，看下一条；</li>
+<li>MyISAM 索引和数据分开，所以它的索引都是存储的数据行地址，但是 InnoDB 不同，对于主键，它存储的是整个数据，而辅助索引存储的是主键ID，这里引申出下一条；</li>
+<li>InnoDB 必需有主键，当然，你可以说你不创建，但是引擎会默认给你加上一个 6 字节的隐藏主键，<strong>建议开发者明确指定 InnoDB 表主键</strong>；</li>
+<li>怎么记索引实现区别，两个词：<strong>“聚集”、“非聚集”</strong>。</li>
+</ul>
+<h4 id="可移植性、备份及恢复"><a href="#可移植性、备份及恢复" class="headerlink" title="可移植性、备份及恢复"></a>可移植性、备份及恢复</h4><ul>
+<li>MyISAM 数据文件可被压缩，存储空间较小。备份恢复可拷贝文件；</li>
+<li>InnoDB 也可以拷贝文件，但是数据量大时就麻烦;</li>
+<li>都可 mysqldump 和 binlog。<blockquote>
+<p>MyISAM 支持三种不同的存储格式：静态表(默认，但是注意数据末尾不能有空格，会被去掉)、动态表、压缩表。</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<p>还依赖 <a href="http://phantomjs.org/" target="_blank" rel="noopener">PhantomJS</a></p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 安装命令</span><br><span class="line">pip install pyspider</span><br></pre></td></tr></table></figure>
-<p>在 Windows 上安装时，会发现如下错误：</p>
-<blockquote>
-<p>Command “c:\python27\python.exe -u -c “import setuptools, tokenize;<strong>file</strong>=’c:\<br>\users\xiaoxin\appdata\local\temp\pip-build-ml1vkg\lxml\setup.py’;f=getat<br>tr(tokenize, ‘open’, open)(<strong>file</strong>);code=f.read().replace(‘\r\n’, ‘\n’);f.close<br>();exec(compile(code, <strong>file</strong>, ‘exec’))” install –record c:\users\xiaoxin\appd<br>ata\local\temp\pip-scbd90-record\install-record.txt –single-version-externally-<br>managed –compile” failed with error code 1 in c:\users\xiaoxin\appdata\local\te<br>mp\pip-build-ml1vkg\lxml\</p>
-</blockquote>
-<p>这时，我们需要使用到 <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="noopener">Python Extension Packages For Windows</a> ，找到 lxml.whl 下载，然后使用 pip 安装即可！<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install lxml.whl</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p><em>如果遇到其它错误一样处理。</em></p>
-</blockquote>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>pyspider 已经完成了大部分功能，基本上是不用配置的，当然你需要的是建立目录，不然会跑到默认目录，到时你还得找装到。</p>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>在你所建的目录，直接使用 <em>pyspider</em> 启动即可。</p>
-<p>提示如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[W 161130 18:01:07 run:403] phantomjs not found, continue running without it.</span><br><span class="line">[I 161130 18:01:10 result_worker:49] result_worker starting...</span><br><span class="line">[I 161130 18:01:10 processor:208] processor starting...</span><br><span class="line">[I 161130 18:01:11 tornado_fetcher:508] fetcher starting...</span><br><span class="line">c:\python27\lib\site-packages\flask\exthook.py:71: ExtDeprecationWarning: Import</span><br><span class="line">ing flask.ext.login is deprecated, use flask_login instead.</span><br><span class="line">  .format(x=modname), ExtDeprecationWarning</span><br><span class="line">[I 161130 18:01:13 scheduler:569] scheduler starting...</span><br><span class="line">[I 161130 18:01:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br><span class="line">[I 161130 18:01:14 scheduler:683] scheduler.xmlrpc listening on 127.0.0.1:23333</span><br><span class="line">[I 161130 18:01:14 app:76] webui running on 0.0.0.0:5000</span><br><span class="line">[I 161130 18:02:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br><span class="line">[I 161130 18:03:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br></pre></td></tr></table></figure></p>
-<p>这时，你在浏览器里输入 <a href="http://localhost:5000/" target="_blank" rel="noopener">http://localhost:5000/</a> 也就能看到运行效果了。</p>
+</li>
+</ul>
+<h4 id="事务及外键"><a href="#事务及外键" class="headerlink" title="事务及外键"></a>事务及外键</h4><ul>
+<li>MyISAM 不支持事务和外键；</li>
+<li>InnoDB 支持事务和外键。</li>
+</ul>
+<h4 id="表锁差异"><a href="#表锁差异" class="headerlink" title="表锁差异"></a>表锁差异</h4><ul>
+<li>MyISAM 只支持表级锁，用户在操作 MyISAM 表时，select，update，delete，insert 语句都会给表自动加锁，如果加锁以后的表满足 insert 并发的情况下，可以在表的尾部插入新的数据。</li>
+<li>InnoDB 支持事务和行级锁，是 InnoDB 的最大特色。行锁大幅度提高了多用户并发操作的新能。但是 InnoDB的行锁，只是在 WHERE 的主键是有效的，非主键的 WHERE 都会锁全表的。</li>
+</ul>
+<h4 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h4><ul>
+<li>MyISAM 支持 FULLTEXT 类型的全文索引</li>
+<li>InnoDB 不支持 FULLTEXT 类型的全文索引，但是 InnoDB 可以使用 sphinx 插件支持全文索引，并且效果更好。</li>
+</ul>
+<h4 id="表的具体行数"><a href="#表的具体行数" class="headerlink" title="表的具体行数"></a>表的具体行数</h4><ul>
+<li>MyISAM 保存有表的总行数，如果 <em>select count() from table;</em> 会直接取出出该值。</li>
+<li>InnoDB 没有保存表的总行数，如果使用 <em>select count() from table;</em> 就会遍历整个表，消耗相当大，但是在加了 wehre 条件后，MyISAM 和 InnoDB 处理的方式都一样。</li>
+</ul>
 
       
       
@@ -397,6 +470,22 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+          
+            <a href="/tags/InnoDB/" rel="tag"># InnoDB</a>
+          
+            <a href="/tags/MyISAM/" rel="tag"># MyISAM</a>
+          
+            <a href="/tags/索引/" rel="tag"># 索引</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B-Tree</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B+Tree</a>
+          
+        </div>
+      
 
       
       
@@ -406,8 +495,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/10/laravel Ioc 容器及 DI 介绍/" rel="next" title="laravel Ioc 容器及 DI 介绍">
-                <i class="fa fa-chevron-left"></i> laravel Ioc 容器及 DI 介绍
+              <a href="/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/" rel="next" title="Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)">
+                <i class="fa fa-chevron-left"></i> Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)
               </a>
             
           </div>
@@ -416,8 +505,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/" rel="prev" title="Golang学习笔记：当关键字“go”遇上“runtime”">
-                Golang学习笔记：当关键字“go”遇上“runtime” <i class="fa fa-chevron-right"></i>
+              <a href="/2019/01/13/Mysql学习笔记：事务隔离级别理解/" rel="prev" title="Mysql笔记：事务隔离级别理解">
+                Mysql笔记：事务隔离级别理解 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -583,7 +672,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是-pyspider"><span class="nav-number">1.</span> <span class="nav-text">什么是 pyspider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pyspider-依赖的环境"><span class="nav-number">2.</span> <span class="nav-text">pyspider 依赖的环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">4.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#构成上的区别"><span class="nav-number">1.</span> <span class="nav-text">构成上的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#索引和数据的存储结构区别"><span class="nav-number">1.1.</span> <span class="nav-text">索引和数据的存储结构区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#索引实现区别"><span class="nav-number">1.2.</span> <span class="nav-text">索引实现区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可移植性、备份及恢复"><span class="nav-number">1.3.</span> <span class="nav-text">可移植性、备份及恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事务及外键"><span class="nav-number">1.4.</span> <span class="nav-text">事务及外键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表锁差异"><span class="nav-number">1.5.</span> <span class="nav-text">表锁差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全文索引"><span class="nav-number">1.6.</span> <span class="nav-text">全文索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表的具体行数"><span class="nav-number">1.7.</span> <span class="nav-text">表的具体行数</span></a></li></ol></li></ol></div>
             
 
           </div>

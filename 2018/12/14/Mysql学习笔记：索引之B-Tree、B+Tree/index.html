@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree,">
 
 
 
@@ -86,17 +86,18 @@
 
 
 
-<meta name="description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta name="description" content="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树数据结构说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。 上面的描述中有几点信息：  树高H影响查找次数； 上一点中的每一次查找还会涉及到磁盘I/O;   记 N 为 B-tree 中的 Key 的数据量，d 为">
+<meta name="keywords" content="Mysql,InnoDB,MyISAM,索引,B-Tree,B+Tree">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pyspider安装配置及使用">
-<meta property="og:url" content="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/index.html">
+<meta property="og:title" content="Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)">
+<meta property="og:url" content="http://chaffz.github.io/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/index.html">
 <meta property="og:site_name" content="三岁于辛博客">
-<meta property="og:description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta property="og:description" content="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树数据结构说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。 上面的描述中有几点信息：  树高H影响查找次数； 上一点中的每一次查找还会涉及到磁盘I/O;   记 N 为 B-tree 中的 Key 的数据量，d 为">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-22T13:05:49.005Z">
+<meta property="og:updated_time" content="2018-12-14T09:44:18.545Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pyspider安装配置及使用">
-<meta name="twitter:description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta name="twitter:title" content="Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)">
+<meta name="twitter:description" content="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树数据结构说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。 上面的描述中有几点信息：  树高H影响查找次数； 上一点中的每一次查找还会涉及到磁盘I/O;   记 N 为 B-tree 中的 Key 的数据量，d 为">
 
 
 
@@ -126,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/">
+  <link rel="canonical" href="http://chaffz.github.io/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/">
 
 
 
 
 
-  <title>pyspider安装配置及使用 | 三岁于辛博客</title>
+  <title>Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树) | 三岁于辛博客</title>
   
 
 
@@ -279,7 +280,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -296,7 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">pyspider安装配置及使用</h1>
+          <h1 class="post-title" itemprop="name headline">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</h1>
         
 
         <div class="post-meta">
@@ -308,8 +309,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-30T17:48:01+08:00">
-                2016-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-14T17:40:17+08:00">
+                2018-12-14
               </time>
             
 
@@ -318,6 +319,61 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -346,30 +402,34 @@
       
 
       
-        <h3 id="什么是-pyspider"><a href="#什么是-pyspider" class="headerlink" title="什么是 pyspider"></a>什么是 pyspider</h3><p>pyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。</p>
-<p>所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。</p>
-<p>为了达到5分钟更新，我们使用抓取最近更新页上面的最后更新时间，以此来判断页面是否需要再次抓取。</p>
-<p>可见，这个项目对于爬虫的监控和调度要求是非常高的。</p>
+        <h3 id="为什么会使用B-Tree和B-Tree，而不是二叉树、红黑树"><a href="#为什么会使用B-Tree和B-Tree，而不是二叉树、红黑树" class="headerlink" title="为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树"></a>为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>说索引之前需要先提到一点，树结构做查找时，最坏情况需要查找的次数是树的高度H，而对于Mysql来说，当数据文件很大时，就需要根据树的节点把对应的数据加载到内存中，也就是I/O。</strong></p>
+<p>上面的描述中有几点信息：</p>
+<ol>
+<li>树高H影响查找次数；</li>
+<li>上一点中的每一次查找还会涉及到磁盘I/O;</li>
+</ol>
+<blockquote>
+<p>记 N 为 B-tree 中的 Key 的数据量，d 为内节点出度的二分之一，则我们可以证明 $ H \leq \frac{\log_d(N + 1)}{2} $，渐进复杂度为 $ O(H) = O(log_dN) $。<br>d 为内节点出度，表示非根节点和叶子节点拥有最少的子女数，并且规定最大不能超过 2d。<strong>注意：这里也有文献会反过来表示，即最大为 d, 最少不能少于 $ \frac{d}{2} $</strong></p>
+</blockquote>
+<p>很明显，<strong>树高度H越高查询效率越低。</strong></p>
 <a id="more"></a>
-<h3 id="pyspider-依赖的环境"><a href="#pyspider-依赖的环境" class="headerlink" title="pyspider 依赖的环境"></a>pyspider 依赖的环境</h3><p>首先需要使用 python ，至于什么版本，按个人经验来说，当然是推荐 python 2.7 了！！~因为本人曾经装的时候，被 3 坑了好久，最后不得不回退 python 才安装成功。还有，就是最好使用 32 位的 python。别问我为什么~~</p>
+<p>回到问题上，我相信很多人已经猜到了为什么B树会比二叉树更合理了！但是这只是说明了一个层面的东西，<strong>高度越低查询次数越少。</strong></p>
+<h4 id="局部性原理与磁盘预读"><a href="#局部性原理与磁盘预读" class="headerlink" title="局部性原理与磁盘预读"></a>局部性原理与磁盘预读</h4><p>由于存储介质的特性，磁盘本身存取就比主存慢很多，再加上机械运动耗费，磁盘的存取速度往往是主存的几百分分之一，因此为了提高效率，要尽量减少磁盘I/O。为了达到这个目的，磁盘往往不是严格按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置开始，顺序向后读取一定长度的数据放入内存。这样做的理论依据是计算机科学中著名的局部性原理：<strong>当一个数据被用到时，其附近的数据也通常会马上被使用。</strong>由于磁盘顺序读取的效率很高（不需要寻道时间，只需很少的旋转时间），因此对于具有局部性的程序来说，预读可以提高I/O效率。<br>数据库系统的<strong>设计者巧妙利用了磁盘预读原理</strong>，将一个节点的大小设为等于一个页，这样每个节点只需要一次I/O就可以完全载入。为了达到这个目的，在实际实现B-Tree还需要使用如下技巧：<br><strong>每次新建节点时，直接申请一个页的空间，这样就保证一个节点物理上也存储在一个页里，加之计算机存储分配都是按页对齐的，就实现了一个node只需一次I/O。</strong></p>
+<h4 id="B-Tree-和-B-Tree-区别"><a href="#B-Tree-和-B-Tree-区别" class="headerlink" title="B-Tree 和 B+Tree 区别"></a>B-Tree 和 B+Tree 区别</h4><p><strong>最大上的不同是内节点不存储数据。</strong><br>另外，每个节点的指针数不一样，B-Tree 是<strong>数据隔开指针</strong>，上文提到过最大子女数是 2d，所以B-Tree的最大指针数是 2d+1；而B+Tree 是 2d。</p>
+<h3 id="Mysql不同索引实现"><a href="#Mysql不同索引实现" class="headerlink" title="Mysql不同索引实现"></a>Mysql不同索引实现</h3><p>通过上文两点，我们理解了为什么使用B树。但同样是B树，也有不同的使用。</p>
+<h4 id="聚集和非聚集"><a href="#聚集和非聚集" class="headerlink" title="聚集和非聚集"></a>聚集和非聚集</h4><p><strong>聚集与非聚集的主要区别可理解为索引的叶子节点中存储是真实的数据还只是指针。</strong>这一点，在MyISAM和InnoDB的主键之间表现是不同的。MyISAM使用的是非聚集，最好的表现在MyISAM的存储文件分为索引文件(.MYI)和数据文件(.MYD)，而InnoDB是索引和数据在一个文件里。</p>
 <blockquote>
-<p>最新的 pyspider 依赖包中有对 pip 版本有需求的，所以需要使用如下命令行来更新 pip 版本：</p>
+<p>上文可理解MyISAM和InnoDB区别之：</p>
+<ol>
+<li>存储的文件内容不一样；</li>
+<li>因为InnoDB是根据主键聚集数据的，所以在<strong>创建InnoDB表时必需要有主键</strong>；</li>
+<li>扩展一点：<strong>InnoDB辅助索引是根据主键值聚集的</strong>；什么意思？就是InnoDB的非主键索引的叶子节点里存储的是主键的值；</li>
+</ol>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<p>还依赖 <a href="http://phantomjs.org/" target="_blank" rel="noopener">PhantomJS</a></p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 安装命令</span><br><span class="line">pip install pyspider</span><br></pre></td></tr></table></figure>
-<p>在 Windows 上安装时，会发现如下错误：</p>
-<blockquote>
-<p>Command “c:\python27\python.exe -u -c “import setuptools, tokenize;<strong>file</strong>=’c:\<br>\users\xiaoxin\appdata\local\temp\pip-build-ml1vkg\lxml\setup.py’;f=getat<br>tr(tokenize, ‘open’, open)(<strong>file</strong>);code=f.read().replace(‘\r\n’, ‘\n’);f.close<br>();exec(compile(code, <strong>file</strong>, ‘exec’))” install –record c:\users\xiaoxin\appd<br>ata\local\temp\pip-scbd90-record\install-record.txt –single-version-externally-<br>managed –compile” failed with error code 1 in c:\users\xiaoxin\appdata\local\te<br>mp\pip-build-ml1vkg\lxml\</p>
-</blockquote>
-<p>这时，我们需要使用到 <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="noopener">Python Extension Packages For Windows</a> ，找到 lxml.whl 下载，然后使用 pip 安装即可！<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install lxml.whl</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p><em>如果遇到其它错误一样处理。</em></p>
-</blockquote>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>pyspider 已经完成了大部分功能，基本上是不用配置的，当然你需要的是建立目录，不然会跑到默认目录，到时你还得找装到。</p>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>在你所建的目录，直接使用 <em>pyspider</em> 启动即可。</p>
-<p>提示如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[W 161130 18:01:07 run:403] phantomjs not found, continue running without it.</span><br><span class="line">[I 161130 18:01:10 result_worker:49] result_worker starting...</span><br><span class="line">[I 161130 18:01:10 processor:208] processor starting...</span><br><span class="line">[I 161130 18:01:11 tornado_fetcher:508] fetcher starting...</span><br><span class="line">c:\python27\lib\site-packages\flask\exthook.py:71: ExtDeprecationWarning: Import</span><br><span class="line">ing flask.ext.login is deprecated, use flask_login instead.</span><br><span class="line">  .format(x=modname), ExtDeprecationWarning</span><br><span class="line">[I 161130 18:01:13 scheduler:569] scheduler starting...</span><br><span class="line">[I 161130 18:01:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br><span class="line">[I 161130 18:01:14 scheduler:683] scheduler.xmlrpc listening on 127.0.0.1:23333</span><br><span class="line">[I 161130 18:01:14 app:76] webui running on 0.0.0.0:5000</span><br><span class="line">[I 161130 18:02:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br><span class="line">[I 161130 18:03:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br></pre></td></tr></table></figure></p>
-<p>这时，你在浏览器里输入 <a href="http://localhost:5000/" target="_blank" rel="noopener">http://localhost:5000/</a> 也就能看到运行效果了。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="http://blog.codinglabs.org/articles/theory-of-mysql-index.html" target="_blank" rel="noopener">MySQL索引背后的数据结构及算法原理</a></li>
+<li><a href="https://www.zhihu.com/question/19836260/answer/17906104" target="_blank" rel="noopener">为什么 B-tree 在不同著作中度的定义有一定差别</a></li>
+</ul>
 
       
       
@@ -397,6 +457,22 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+          
+            <a href="/tags/InnoDB/" rel="tag"># InnoDB</a>
+          
+            <a href="/tags/MyISAM/" rel="tag"># MyISAM</a>
+          
+            <a href="/tags/索引/" rel="tag"># 索引</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B-Tree</a>
+          
+            <a href="/tags/B-Tree/" rel="tag"># B+Tree</a>
+          
+        </div>
+      
 
       
       
@@ -406,8 +482,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/10/laravel Ioc 容器及 DI 介绍/" rel="next" title="laravel Ioc 容器及 DI 介绍">
-                <i class="fa fa-chevron-left"></i> laravel Ioc 容器及 DI 介绍
+              <a href="/2018/12/04/Docker学习笔记：docker-compose-中难缠的网络问题/" rel="next" title="Docker学习笔记：docker compose 中难缠的网络问题">
+                <i class="fa fa-chevron-left"></i> Docker学习笔记：docker compose 中难缠的网络问题
               </a>
             
           </div>
@@ -416,8 +492,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/" rel="prev" title="Golang学习笔记：当关键字“go”遇上“runtime”">
-                Golang学习笔记：当关键字“go”遇上“runtime” <i class="fa fa-chevron-right"></i>
+              <a href="/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/" rel="prev" title="Mysql学习笔记：存储引擎MyISAM和InnoDB的区别">
+                Mysql学习笔记：存储引擎MyISAM和InnoDB的区别 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -583,7 +659,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是-pyspider"><span class="nav-number">1.</span> <span class="nav-text">什么是 pyspider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pyspider-依赖的环境"><span class="nav-number">2.</span> <span class="nav-text">pyspider 依赖的环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">4.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么会使用B-Tree和B-Tree，而不是二叉树、红黑树"><span class="nav-number">1.</span> <span class="nav-text">为什么会使用B-Tree和B+Tree，而不是二叉树、红黑树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据结构"><span class="nav-number">1.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局部性原理与磁盘预读"><span class="nav-number">1.2.</span> <span class="nav-text">局部性原理与磁盘预读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-和-B-Tree-区别"><span class="nav-number">1.3.</span> <span class="nav-text">B-Tree 和 B+Tree 区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql不同索引实现"><span class="nav-number">2.</span> <span class="nav-text">Mysql不同索引实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#聚集和非聚集"><span class="nav-number">2.1.</span> <span class="nav-text">聚集和非聚集</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>

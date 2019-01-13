@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Mysql,InnoDB,事务,隔离,">
 
 
 
@@ -86,17 +86,18 @@
 
 
 
-<meta name="description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta name="description" content="这个问题其实有很多人都已经教科书式的总结了很多遍，如：    隔离级别 中文描述 此级别问题(面试官喜欢用这个)     READ UNCOMMITED 未提交读 脏读   READ COMMITED 提交读 不可重复读   REPEATABLE READ 可重复读 幻读   SERIALIZABLE 串行化 锁    但是在这个表格中最后一列的问题因何产生，很多人会不明白其中的缘由。我先说下我的">
+<meta name="keywords" content="Mysql,InnoDB,事务,隔离">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pyspider安装配置及使用">
-<meta property="og:url" content="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/index.html">
+<meta property="og:title" content="Mysql笔记：事务隔离级别理解">
+<meta property="og:url" content="http://chaffz.github.io/2019/01/13/Mysql学习笔记：事务隔离级别理解/index.html">
 <meta property="og:site_name" content="三岁于辛博客">
-<meta property="og:description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta property="og:description" content="这个问题其实有很多人都已经教科书式的总结了很多遍，如：    隔离级别 中文描述 此级别问题(面试官喜欢用这个)     READ UNCOMMITED 未提交读 脏读   READ COMMITED 提交读 不可重复读   REPEATABLE READ 可重复读 幻读   SERIALIZABLE 串行化 锁    但是在这个表格中最后一列的问题因何产生，很多人会不明白其中的缘由。我先说下我的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-22T13:05:49.005Z">
+<meta property="og:updated_time" content="2019-01-13T07:52:55.390Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pyspider安装配置及使用">
-<meta name="twitter:description" content="什么是 pyspiderpyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。 所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。 为了达到5分钟更新，我们使用抓取最近更新页上面的最">
+<meta name="twitter:title" content="Mysql笔记：事务隔离级别理解">
+<meta name="twitter:description" content="这个问题其实有很多人都已经教科书式的总结了很多遍，如：    隔离级别 中文描述 此级别问题(面试官喜欢用这个)     READ UNCOMMITED 未提交读 脏读   READ COMMITED 提交读 不可重复读   REPEATABLE READ 可重复读 幻读   SERIALIZABLE 串行化 锁    但是在这个表格中最后一列的问题因何产生，很多人会不明白其中的缘由。我先说下我的">
 
 
 
@@ -126,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/">
+  <link rel="canonical" href="http://chaffz.github.io/2019/01/13/Mysql学习笔记：事务隔离级别理解/">
 
 
 
 
 
-  <title>pyspider安装配置及使用 | 三岁于辛博客</title>
+  <title>Mysql笔记：事务隔离级别理解 | 三岁于辛博客</title>
   
 
 
@@ -279,7 +280,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2016/11/30/pyspider安装配置及使用/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2019/01/13/Mysql学习笔记：事务隔离级别理解/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -296,7 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">pyspider安装配置及使用</h1>
+          <h1 class="post-title" itemprop="name headline">Mysql笔记：事务隔离级别理解</h1>
         
 
         <div class="post-meta">
@@ -308,8 +309,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-30T17:48:01+08:00">
-                2016-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T15:47:17+08:00">
+                2019-01-13
               </time>
             
 
@@ -318,6 +319,61 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -346,30 +402,100 @@
       
 
       
-        <h3 id="什么是-pyspider"><a href="#什么是-pyspider" class="headerlink" title="什么是 pyspider"></a>什么是 pyspider</h3><p>pyspider 来源于以前做的一个垂直搜索引擎使用的爬虫后端。我们需要从200个站点（由于站点失效，不是都同时啦，同时有100+在跑吧）采集数据，并要求在5分钟内将对方网站的更新更新到库中。</p>
-<p>所以，灵活的抓取控制是必须的。同时，由于100个站点，每天都可能会有站点失效或者改版，所以需要能够监控模板失效，以及查看抓取状态。</p>
-<p>为了达到5分钟更新，我们使用抓取最近更新页上面的最后更新时间，以此来判断页面是否需要再次抓取。</p>
-<p>可见，这个项目对于爬虫的监控和调度要求是非常高的。</p>
+        <p>这个问题其实有很多人都已经教科书式的总结了很多遍，如：</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>中文描述</th>
+<th>此级别问题(面试官喜欢用这个)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>READ UNCOMMITED</td>
+<td>未提交读</td>
+<td>脏读</td>
+</tr>
+<tr>
+<td>READ COMMITED</td>
+<td>提交读</td>
+<td>不可重复读</td>
+</tr>
+<tr>
+<td>REPEATABLE READ</td>
+<td>可重复读</td>
+<td>幻读</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td>串行化</td>
+<td>锁</td>
+</tr>
+</tbody>
+</table>
+<p>但是在这个表格中最后一列的问题因何产生，很多人会不明白其中的缘由。我先说下我的理解，然后再来一点点解释：</p>
+<blockquote>
+<p><strong>事务隔离的四个级别可以先用“事务是否可并发”来划分成两个对立面来理解：</strong></p>
+<ol>
+<li>事务不可并发在 Mysql 中只有 SERIALIZABLE 这一级别满足；其它的当然是事务可并发了；</li>
+<li>事务不可并发，Mysql 选择了串行化这一实现方式，因此引入了锁，也带来了性能问题；</li>
+<li>事务可并发，因此在多个并发的事务期间，我们并不知道哪个事务的哪段逻辑（begin/rollback/commit）会在下一个时间片内被执行；</li>
+</ol>
+</blockquote>
 <a id="more"></a>
-<h3 id="pyspider-依赖的环境"><a href="#pyspider-依赖的环境" class="headerlink" title="pyspider 依赖的环境"></a>pyspider 依赖的环境</h3><p>首先需要使用 python ，至于什么版本，按个人经验来说，当然是推荐 python 2.7 了！！~因为本人曾经装的时候，被 3 坑了好久，最后不得不回退 python 才安装成功。还有，就是最好使用 32 位的 python。别问我为什么~~</p>
-<blockquote>
-<p>最新的 pyspider 依赖包中有对 pip 版本有需求的，所以需要使用如下命令行来更新 pip 版本：</p>
+<h1 id="并发事务带来的问题"><a href="#并发事务带来的问题" class="headerlink" title="并发事务带来的问题"></a>并发事务带来的问题</h1><p>在上面的描述中，2、3是对1的一个扩展，2不难理解，但是 3 可能有些生硬，我们可以简单的换种理解方式，</p>
+<ol>
+<li>假设同一时间有两个事务: <strong>A &amp; B</strong>，并且事务 A 执行 update，事务 B 执行 select。</li>
+<li>假设事务的开启、提交、回滚及事务中执行的 Action 都能在一个 cpu 时间片内完成，那么可把 A&amp;B 的事务拆成如下逻辑调用段：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>begin</td>
+<td>begin</td>
+</tr>
+<tr>
+<td>2</td>
+<td>update</td>
+<td>select</td>
+</tr>
+<tr>
+<td>3</td>
+<td>commit</td>
+<td>commit</td>
+</tr>
+<tr>
+<td>4</td>
+<td>rollback</td>
+<td>rollback</td>
+</tr>
+</tbody>
+</table>
+<p>基于上面的假设，我们再来理解事务并发情况下各种问题的产生：</p>
+<h2 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h2><ol>
+<li>A begin =&gt; update 后让 cpu</li>
+<li>同时B begin =&gt; select，但是事务 B 很心大，并没有去验证 A 的有效性，读到了 A update 后的数据；</li>
+<li>A 在下一个 cpu 时间又得到了调度，A 发现自己刚才的操作无效了，A rollback 得到了执行，但是它无法告知 B 了，所以 B 读到的数据是无效的；<h2 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h2>知道了脏读的原因后，为了解决这个问题，Mysql 规定 B 读的数据只能读取已经 commit 状态的数据：</li>
+<li>A begin =&gt; update 后让 cpu</li>
+<li>同时 B begin =&gt; select，这次 B 很小心地验证 A 的数据是否 commit 了，B 这次读到了 A begin 以前的数据；</li>
+<li>事务 A 在下一个 cpu 时间又得到了调度，A commit 了；</li>
+<li>B 再次 select，但是已经 select 到了 A commit 后的数据了，B 在 A commit 前后读到了两次不一样的数据，即不可重复读了；<h2 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h2>知道了不可重复读的原因后，Mysql 又规定，既然 B 第一次读到的是 A commit 前的数据，那么在事务 B 中后面无论多少次 select 都只能读到 A commit 之前的数据。但是问题又来了：</li>
+<li>这次 A 不是 update 了，而是 insert，B select 也不是单条了，而是 select range；</li>
+<li>B 在 A commit 前后两次 select range 会发现结果的数量不一至；这就是幻读；<blockquote>
+<p>InnoDB 针对幻读也做了处理：MVCC，在每一行后都有隐藏的两列版本号来实现；大致与处理不可重复读相同；</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<p>还依赖 <a href="http://phantomjs.org/" target="_blank" rel="noopener">PhantomJS</a></p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 安装命令</span><br><span class="line">pip install pyspider</span><br></pre></td></tr></table></figure>
-<p>在 Windows 上安装时，会发现如下错误：</p>
-<blockquote>
-<p>Command “c:\python27\python.exe -u -c “import setuptools, tokenize;<strong>file</strong>=’c:\<br>\users\xiaoxin\appdata\local\temp\pip-build-ml1vkg\lxml\setup.py’;f=getat<br>tr(tokenize, ‘open’, open)(<strong>file</strong>);code=f.read().replace(‘\r\n’, ‘\n’);f.close<br>();exec(compile(code, <strong>file</strong>, ‘exec’))” install –record c:\users\xiaoxin\appd<br>ata\local\temp\pip-scbd90-record\install-record.txt –single-version-externally-<br>managed –compile” failed with error code 1 in c:\users\xiaoxin\appdata\local\te<br>mp\pip-build-ml1vkg\lxml\</p>
-</blockquote>
-<p>这时，我们需要使用到 <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="noopener">Python Extension Packages For Windows</a> ，找到 lxml.whl 下载，然后使用 pip 安装即可！<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install lxml.whl</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p><em>如果遇到其它错误一样处理。</em></p>
-</blockquote>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>pyspider 已经完成了大部分功能，基本上是不用配置的，当然你需要的是建立目录，不然会跑到默认目录，到时你还得找装到。</p>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>在你所建的目录，直接使用 <em>pyspider</em> 启动即可。</p>
-<p>提示如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[W 161130 18:01:07 run:403] phantomjs not found, continue running without it.</span><br><span class="line">[I 161130 18:01:10 result_worker:49] result_worker starting...</span><br><span class="line">[I 161130 18:01:10 processor:208] processor starting...</span><br><span class="line">[I 161130 18:01:11 tornado_fetcher:508] fetcher starting...</span><br><span class="line">c:\python27\lib\site-packages\flask\exthook.py:71: ExtDeprecationWarning: Import</span><br><span class="line">ing flask.ext.login is deprecated, use flask_login instead.</span><br><span class="line">  .format(x=modname), ExtDeprecationWarning</span><br><span class="line">[I 161130 18:01:13 scheduler:569] scheduler starting...</span><br><span class="line">[I 161130 18:01:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br><span class="line">[I 161130 18:01:14 scheduler:683] scheduler.xmlrpc listening on 127.0.0.1:23333</span><br><span class="line">[I 161130 18:01:14 app:76] webui running on 0.0.0.0:5000</span><br><span class="line">[I 161130 18:02:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br><span class="line">[I 161130 18:03:13 scheduler:508] in 5m: new:0,success:0,retry:0,failed:0</span><br></pre></td></tr></table></figure></p>
-<p>这时，你在浏览器里输入 <a href="http://localhost:5000/" target="_blank" rel="noopener">http://localhost:5000/</a> 也就能看到运行效果了。</p>
+</li>
+</ol>
+<h1 id="不可并发带来的问题"><a href="#不可并发带来的问题" class="headerlink" title="不可并发带来的问题"></a>不可并发带来的问题</h1><p>Mysql 用串行来实现不可并发，虽说是串行，但是要保证事务被正确的放入串行队列中，就会引入锁等机制，增加了开销，所以非不得已，将不会使用此级别。</p>
 
       
       
@@ -397,6 +523,18 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+          
+            <a href="/tags/InnoDB/" rel="tag"># InnoDB</a>
+          
+            <a href="/tags/事务/" rel="tag"># 事务</a>
+          
+            <a href="/tags/隔离/" rel="tag"># 隔离</a>
+          
+        </div>
+      
 
       
       
@@ -406,8 +544,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/10/laravel Ioc 容器及 DI 介绍/" rel="next" title="laravel Ioc 容器及 DI 介绍">
-                <i class="fa fa-chevron-left"></i> laravel Ioc 容器及 DI 介绍
+              <a href="/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/" rel="next" title="Mysql学习笔记：存储引擎MyISAM和InnoDB的区别">
+                <i class="fa fa-chevron-left"></i> Mysql学习笔记：存储引擎MyISAM和InnoDB的区别
               </a>
             
           </div>
@@ -415,10 +553,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/11/19/Golang学习笔记：当关键字“go”遇上“runtime”/" rel="prev" title="Golang学习笔记：当关键字“go”遇上“runtime”">
-                Golang学习笔记：当关键字“go”遇上“runtime” <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -583,7 +717,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是-pyspider"><span class="nav-number">1.</span> <span class="nav-text">什么是 pyspider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pyspider-依赖的环境"><span class="nav-number">2.</span> <span class="nav-text">pyspider 依赖的环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">4.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#并发事务带来的问题"><span class="nav-number">1.</span> <span class="nav-text">并发事务带来的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#脏读"><span class="nav-number">1.1.</span> <span class="nav-text">脏读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不可重复读"><span class="nav-number">1.2.</span> <span class="nav-text">不可重复读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#幻读"><span class="nav-number">1.3.</span> <span class="nav-text">幻读</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不可并发带来的问题"><span class="nav-number">2.</span> <span class="nav-text">不可并发带来的问题</span></a></li></ol></div>
             
 
           </div>

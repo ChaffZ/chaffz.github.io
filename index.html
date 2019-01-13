@@ -279,7 +279,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2019/01/13/Mysql学习笔记：事务隔离级别理解/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -298,7 +298,227 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/" itemprop="url">Mysql存储引擎MyISAM和InnoDB的区别</a></h1>
+                <a class="post-title-link" href="/2019/01/13/Mysql学习笔记：事务隔离级别理解/" itemprop="url">Mysql笔记：事务隔离级别理解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T15:47:17+08:00">
+                2019-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/索引/" itemprop="url" rel="index">
+                    <span itemprop="name">索引</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>这个问题其实有很多人都已经教科书式的总结了很多遍，如：</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>中文描述</th>
+<th>此级别问题(面试官喜欢用这个)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>READ UNCOMMITED</td>
+<td>未提交读</td>
+<td>脏读</td>
+</tr>
+<tr>
+<td>READ COMMITED</td>
+<td>提交读</td>
+<td>不可重复读</td>
+</tr>
+<tr>
+<td>REPEATABLE READ</td>
+<td>可重复读</td>
+<td>幻读</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td>串行化</td>
+<td>锁</td>
+</tr>
+</tbody>
+</table>
+<p>但是在这个表格中最后一列的问题因何产生，很多人会不明白其中的缘由。我先说下我的理解，然后再来一点点解释：</p>
+<blockquote>
+<p><strong>事务隔离的四个级别可以先用“事务是否可并发”来划分成两个对立面来理解：</strong></p>
+<ol>
+<li>事务不可并发在 Mysql 中只有 SERIALIZABLE 这一级别满足；其它的当然是事务可并发了；</li>
+<li>事务不可并发，Mysql 选择了串行化这一实现方式，因此引入了锁，也带来了性能问题；</li>
+<li>事务可并发，因此在多个并发的事务期间，我们并不知道哪个事务的哪段逻辑（begin/rollback/commit）会在下一个时间片内被执行；</li>
+</ol>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/01/13/Mysql学习笔记：事务隔离级别理解/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="三岁于辛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="三岁于辛博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/" itemprop="url">Mysql学习笔记：存储引擎MyISAM和InnoDB的区别</a></h1>
         
 
         <div class="post-meta">
@@ -415,7 +635,7 @@
 </blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/12/25/Mysql存储引擎MyISAM和InnoDB的区别/#more" rel="contents">
+            <a class="btn" href="/2018/12/25/Mysql学习笔记：存储引擎MyISAM和InnoDB的区别/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -467,7 +687,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/">
+    <link itemprop="mainEntityOfPage" href="http://chaffz.github.io/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="三岁于辛">
@@ -486,7 +706,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/" itemprop="url">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</a></h1>
+                <a class="post-title-link" href="/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/" itemprop="url">Mysql索引的理解：B-Tree(B-树)和B+Tree(B+树)</a></h1>
         
 
         <div class="post-meta">
@@ -604,7 +824,7 @@
 <p>很明显，<strong>树高度H越高查询效率越低。</strong></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/12/14/Mysql索引的理解：B-Tree-B-树-和B-Tree-B-树/#more" rel="contents">
+            <a class="btn" href="/2018/12/14/Mysql学习笔记：索引之B-Tree、B+Tree/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1810,7 +2030,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1832,7 +2052,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1900,7 +2120,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
